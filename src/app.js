@@ -7,14 +7,15 @@ app.use(express.urlencoded({ extended: true }));
 
 
 let userRoutes = require('./routes/userRoutes');  
-console.log("User routes loaded at /users");
-
 let adminRoutes = require('./routes/adminRoutes'); 
+let hrRoutes = require('./routes/hrRoutes');
 
 app.use(express.static('public'));
 
 app.use('/users', userRoutes);
 app.use('/admin', adminRoutes);
+app.use('/hr', hrRoutes);
+
 
 
 
