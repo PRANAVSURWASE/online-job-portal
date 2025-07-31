@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 let mysql = require("mysql2");
 
 
@@ -12,12 +13,12 @@ let conn=mysql.createConnection({
 conn.connect((err)=>{
     if(err)
     {
-        console.log("Database is not connected"+err.red);
+        console.log("Database is not connected");
         
     }
     else{
-        console.log("Database is connected".green);
+        console.log("Database is connected");
     }
 });
 
-module.export=conn;
+module.exports=conn;
