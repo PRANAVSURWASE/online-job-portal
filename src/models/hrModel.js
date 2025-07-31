@@ -60,3 +60,40 @@ exports.listjobs=()=>{
         });
     });
 }
+exports.getJobById=(job_id)=>{
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM job WHERE j_id = ?", [job_id], (err, result) => {
+            console.log(err, result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+exports.deleteJobById=(j_id)=>{
+    return new Promise((resolve, reject) => {
+        db.query("DELETE FROM job WHERE j_id = ?", [j_id], (err, result) => {
+            console.log(err, result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+exports.searchJobsByName=(j_name)=>{
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM job WHERE j_name LIKE ?", [`%${j_name}%`], (err, result) => {
+            console.log(err, result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}

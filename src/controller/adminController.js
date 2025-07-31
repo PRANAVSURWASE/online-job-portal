@@ -25,6 +25,7 @@ exports.adminLogin=(req,res)=>{
  * View all HRs
  * Fetches all HR records from the database.
  */
+
 exports.viewHR=(req,res)=>{
     let promise=adminModel.viewHR();
     promise.then((result)=>{
@@ -37,7 +38,6 @@ exports.viewHR=(req,res)=>{
         res.json({msg:"Internal server Error ",error:err.message||err});
     })
 }  
-
 /**
  * Delete HR
  * Deletes an HR by hr_id.
@@ -70,12 +70,12 @@ exports.deleteHR=(req,res)=>{
 exports.updateHR=(req,res)=>{   
     let {hr_id, name, company_name, password, contact, email} = req.body;
 
-    console.log(name, company_name, password, contact, email);
+    console.log(name, company_name, password, contact, email)
     
     // Validate input
-   // if(!hr_id || !name || !company_name || !password || !contact || !email){
-       // return res.json({msg:"All fields are required"});
-   // }
+   if(!hr_id || !name || !company_name || !password || !contact || !email){
+       return res.json({msg:"All fields are required"});
+    }
     
     let promise = adminModel.updateHR(hr_id, name, company_name, password, contact, email);
     promise.then((result) => {
@@ -89,7 +89,6 @@ exports.updateHR=(req,res)=>{
         res.json({ msg: "Internal server Error", error: err.message || err });
     });
 }
-
 /**
  * Update HR
  * Updates HR details by hr_id.

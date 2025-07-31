@@ -84,3 +84,60 @@ exports.listjobs = (req, res) => {
         res.json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+exports.getJobById = (req, res) => {
+    let { j_id } = req.body;
+
+    // Validate input
+    if (!j_id) {
+        return res.json({ msg: "Job ID is required" });
+    }
+
+    let promise = hrModel.getJobById(j_id);
+    promise.then((result) => {
+        if (result.length > 0) {
+            res.json({ msg: "Job details fetched successfully", data: result });
+        } else {
+            res.json({ msg: "No job found with the given ID" });
+        }
+    }).catch((err) => {
+        res.json({ msg: "Internal server Error", error: err.message || err });
+    });
+}
+exports.deleteJobById = (req, res) => {
+    let { j_id } = req.body;
+
+    // Validate input
+    if (!j_id) {
+        return res.json({ msg: "Job ID is required" });
+    }
+
+    let promise = hrModel.deleteJobById(j_id);
+    promise.then((result) => {
+        if (result.affectedRows > 0) {
+            res.json({ msg: "Job deleted successfully" });
+        } else {
+            res.json({ msg: "No job found with the given ID" });
+        }
+    }).catch((err) => {
+        res.json({ msg: "Internal server Error", error: err.message || err });
+    });
+}
+exports.searchJobsByName = (req, res) => {
+    let { j_name } = req.body;
+
+    // Validate input
+    if (!j_name) {
+        return res.json({ msg: "Job name is required" });
+    }
+
+    let promise = hrModel.searchJobsByName(j_name);
+    promise.then((result) => {
+        if (result.length > 0) {
+            res.json({ msg: "Jobs found", data: result });
+        } else {
+            res.json({ msg: "No jobs found with the given name" });
+        }
+    }).catch((err) => {
+        res.json({ msg: "Internal server Error", error: err.message || err });
+    });
+}
