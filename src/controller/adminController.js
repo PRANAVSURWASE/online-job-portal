@@ -47,18 +47,18 @@ exports.deleteHR=(req,res)=>{
    
     // Validate input
     if(!hr_id){
-        return res.json({msg:"HR ID is required"});
+        return res.status(400).json({msg:"HR ID is required"});
     }
     
     let promise=adminModel.deleteHR(hr_id);
     promise.then((result)=>{
         if(result.affectedRows>0){
-            res.json({msg:"HR deleted successfully"});
+            res.status(200).json({msg:"HR deleted successfully"});
         }else{
-            res.json({msg:"No HR found with the given ID"});
+            res.status(404).json({msg:"No HR found with the given ID"});
         }
     }).catch((err)=>{
-        res.json({msg:"Internal server Error ",error:err.message||err});
+        res.status(500).json({msg:"Internal server Error ",error:err.message||err});
     })
 }
 
@@ -81,12 +81,12 @@ exports.updateHR=(req,res)=>{
     promise.then((result) => {
 
         if (result.affectedRows > 0) {
-            res.json({ msg: "HR updated successfully" });
+            res.status(200).json({ msg: "HR updated successfully" });
         } else {
-            res.json({ msg: "No HR found with the given ID" });
+            res.status(401).json({ msg: "No HR found with the given ID" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
 /**
@@ -98,16 +98,16 @@ exports.addHR = (req, res) => {
 
     // Validate input
     if (!name || !company_name || !password || !contact || !email) {
-        return res.json({ msg: "All fields are required" });
+        return res.status(400).json({ msg: "All fields are required" });
     }
     let promise = adminModel.addHR(name, company_name, password, contact, email);
     promise.then((result) => {
         if (result.affectedRows > 0) {
-            res.json({ msg: "HR added successfully" });
+            res.status(201).json({ msg: "HR added successfully" });
         } else {
-            res.json({ msg: "HR addition failed" });
+            res.status(500).json({ msg: "HR addition failed" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }

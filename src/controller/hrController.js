@@ -15,12 +15,12 @@ exports.hrRegister = (req, res) => {
     let promise = hrModel.hrRegister( name,company_name,password,contact,email);
     promise.then((result) => {
         if (result.affectedRows > 0) {
-            res.json({ msg: "HR registration successful" });
+            res.status(200).json({ msg: "HR registration successful" });
         } else {
             res.json({ msg: "HR registration failed" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
 
@@ -36,12 +36,12 @@ exports.hrLogin = (req, res) => {
     let promise = hrModel.hrLogin(email, password);
     promise.then((result) => {
         if (result.length > 0) {
-            res.json({ msg: " HR Login successful" });
+            res.status(200).json({ msg: " HR Login successful" });
         } else {
-            res.json({ msg: "Invalid email or password" });
+            res.status(401).json({ msg: "Invalid email or password" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
 
@@ -59,12 +59,12 @@ exports.createJob = (req, res) => {
     let promise = hrModel.createJob(hr_id, j_name, skills);
     promise.then((result) => {
         if (result.affectedRows > 0) {
-            res.json({ msg: "Job posted successfully" });
+            res.status(200).json({ msg: "Job posted successfully" });
         } else {
-            res.json({ msg: "Job creation failed" });
+            res.status(401).json({ msg: "Job creation failed" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
 
@@ -73,17 +73,19 @@ exports.createJob = (req, res) => {
  * Fetches all jobs posted by HRs.
  */
 exports.listjobs = (req, res) => {
+
     let promise = hrModel.listjobs();
     promise.then((result) => {
         if (result.length > 0) {
             res.json({ msg: "Jobs fetched successfully", data: result });
         } else {
-            res.json({ msg: "No jobs found" });
+            res.status(200).json({ msg: "No jobs found" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+
 exports.getJobById = (req, res) => {
     let { j_id } = req.body;
 
@@ -95,14 +97,15 @@ exports.getJobById = (req, res) => {
     let promise = hrModel.getJobById(j_id);
     promise.then((result) => {
         if (result.length > 0) {
-            res.json({ msg: "Job details fetched successfully", data: result });
+            res.status(200).json({ msg: "Job details fetched successfully", data: result });
         } else {
-            res.json({ msg: "No job found with the given ID" });
+            res.status(200).json({ msg: "No job found with the given ID" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+
 exports.deleteJobById = (req, res) => {
     let { j_id } = req.body;
 
@@ -114,30 +117,31 @@ exports.deleteJobById = (req, res) => {
     let promise = hrModel.deleteJobById(j_id);
     promise.then((result) => {
         if (result.affectedRows > 0) {
-            res.json({ msg: "Job deleted successfully" });
+            res.status(200).json({ msg: "Job deleted successfully" });
         } else {
-            res.json({ msg: "No job found with the given ID" });
+            res.status(200).json({ msg: "No job found with the given ID" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+
 exports.searchJobsByName = (req, res) => {
     let { j_name } = req.body;
 
     // Validate input
     if (!j_name) {
-        return res.json({ msg: "Job name is required" });
+        return res.status(400).json({ msg: "Job name is required" });
     }
 
     let promise = hrModel.searchJobsByName(j_name);
     promise.then((result) => {
         if (result.length > 0) {
-            res.json({ msg: "Jobs found", data: result });
+            res.status(200).json({ msg: "Jobs found", data: result });
         } else {
-            res.json({ msg: "No jobs found with the given name" });
+            res.status(404).json({ msg: "No jobs found with the given name" });
         }
     }).catch((err) => {
-        res.json({ msg: "Internal server Error", error: err.message || err });
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }

@@ -8,7 +8,7 @@ let db=require("../../db.js");
 exports.hrRegister=(name,company_name,password,contact,email)=>{
         return new Promise((resolve,reject)=>{
         
-        db.query("INSERT INTO HR (name, company_name, password, contact, email) VALUES (?, ?, ?, ?, ?)",[name,company_name,password,contact,email],(err,result)=>{
+        db.query("insert into HR (name, company_name, password, contact, email) VALUES (?, ?, ?, ?, ?)",[name,company_name,password,contact,email],(err,result)=>{
             console.log(err,result);
             if(err){
                 reject(err); 
@@ -50,7 +50,7 @@ exports.createJob=(hr_id, j_name,skills)=>{
 }
 exports.listjobs=()=>{
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM job", (err, result) => {
+        db.query("select * from job", (err, result) => {
             console.log(err, result);
             if (err) {
                 reject(err);
