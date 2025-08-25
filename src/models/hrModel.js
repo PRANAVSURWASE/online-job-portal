@@ -5,10 +5,10 @@ let db=require("../../db.js");
  * Inserts a new HR record into the HR table.
  * Returns a promise that resolves with the result of the insert operation.
  */
-exports.hrRegister=(name,company_name,password,contact,email)=>{
+exports.hrRegister=(name,company_name,password,contact,email,role)=>{
         return new Promise((resolve,reject)=>{
         
-        db.query("insert into HR (name, company_name, password, contact, email) VALUES (?, ?, ?, ?, ?)",[name,company_name,password,contact,email],(err,result)=>{
+        db.query("insert into hr (name, company_name, password, contact, email) VALUES (?, ?, ?, ?, ?)",[name,company_name,password,contact,email],(err,result)=>{
             console.log(err,result);
             if(err){
                 reject(err); 
@@ -18,23 +18,7 @@ exports.hrRegister=(name,company_name,password,contact,email)=>{
         });
     });
 }
-/**
- * HR Login
- * Authenticates HR using email and password.
- * Returns a promise that resolves with the HR record(s) if found.
- */
-exports.hrLogin=(email,password)=>{
-    return new Promise((resolve,reject)=>{
-        db.query("select * from hr where email=? and password=?",[email,password],(err,result)=>{
-            console.log(err,result);
-            if(err){
-                reject(err); 
-            }else{
-                resolve(result);
-            }
-        });
-    });
-}
+
 exports.createJob=(hr_id, j_name,skills)=>{
     return new Promise((resolve, reject) => {
         db.query("INSERT INTO job (hr_id, j_name, skills ) VALUES (?, ?, ?)", 
@@ -96,4 +80,15 @@ exports.searchJobsByName=(j_name)=>{
             }
         });
     });
+}
+
+exports.findHrByEmail = (email) => {
+  console.log("Finding HR by email:", email);
+  
+  return new Promise((resolve, reject) => {
+    db.query("SELECT * FROM hr WHERE email = ?", [email], (err, results) => {
+      if (err) return reject(err);
+      resolve(results);
+    });
+  });
 }

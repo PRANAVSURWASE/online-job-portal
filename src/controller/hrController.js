@@ -1,4 +1,5 @@
 let hrModel=require("../models/hrModel");
+let jwt = require('jsonwebtoken');
 
 /**
  * HR Registration
@@ -24,25 +25,21 @@ exports.hrRegister = (req, res) => {
     });
 }
 
-/**
- * HR Login
- * Authenticates HR using email and password.
- */
-
-exports.hrLogin = (req, res) => {
-    let { email, password } = req.body;
-    console.log("HR login request received", email, password);
-    
-    let promise = hrModel.hrLogin(email, password);
-    promise.then((result) => {
-        if (result.length > 0) {
-            res.status(200).json({ msg: " HR Login successful" });
-        } else {
-            res.status(401).json({ msg: "Invalid email or password" });
+exports.getHrProfile=(req,res)=>{
+      try {
+        const hr={
+            id:req.user.id,
+            name:req.user.name,
+            company_name:req.user.company_name,
+            contact:req.user.contact,
+            email:req.user.email
         }
-    }).catch((err) => {
-        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
-    });
+        res.json({msg:"hr Profile Loaded successfully",hr});
+    
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
+
 }
 
 /**
@@ -51,6 +48,8 @@ exports.hrLogin = (req, res) => {
  */
 exports.createJob = (req, res) => {
     let { hr_id, j_name,skills } = req.body;
+    console.log(req.body);
+    
    
     if (!hr_id || !j_name  || !skills ) {
         return res.json({ msg: "All fields are required" });
@@ -126,6 +125,7 @@ exports.deleteJobById = (req, res) => {
     });
 }
 
+ 
 exports.searchJobsByName = (req, res) => {
     let { j_name } = req.body;
 

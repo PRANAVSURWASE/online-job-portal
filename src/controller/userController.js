@@ -2,40 +2,7 @@ let userModel = require('../models/userModel');
 let applicationModel = require('../models/applicationModel');
 let jwt = require('jsonwebtoken');
 
-/**
- * User Login
- * Authenticates user using email and password.
- */
-exports.loginUser = (req, res) => {
-   
-    let{ email, password } = req.body;
-    
-    // Call the model to check credentials
-    let promise = userModel.loginUser(email, password);
-    promise.then((result) => {
-        if (result.length > 0) {
-            let user = result[0];
 
-            // Generate JWT token
-            let token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
-                expiresIn: '1h' // Token valid for 1 hour   
-            });
-            // User found, login successful
-            res.json({
-                message: "Login successful" ,
-                token : token,});
-        } else { 
-            // User not found, invalid credentials 
-            res.json({
-                message: "Invalid email or password" });
-        } 
-    }).catch((err) => {
-         // Handle database or server errors
-        res.json({
-           
-            error: err.message || err });
-    })
-} 
 /**
  * User Registration
  * Registers a new user with the provided details.
@@ -43,19 +10,14 @@ exports.loginUser = (req, res) => {
 exports.registerUser = (req, res) => {
      let { name, email, contact, password } = req.body;
      console.log("name, email, contact, password", name, email, contact, password);
-     
-
-      // Validate input fields
+     // Validate input fields
     if (!name || !email  || !contact|| !password) {
         return res.json({
             message: "All fields are required" });
     }
-
     // Call the model to register the user
     let promise=userModel.registerUser(name, email, contact, password);
     promise.then((result) => {  
-        
-        
         if(result.affectedRows>0)
         {
              // Registration successful
@@ -72,6 +34,7 @@ exports.registerUser = (req, res) => {
         res.json({msg: "Internal server Error", error: err.message || err});
     });
 }
+
 //** * Apply for Job
 /**
  * Allows a user to apply for a job.
@@ -79,13 +42,13 @@ exports.registerUser = (req, res) => {
 
 
 exports.applyForJob = (req, res) => {
-    let { u_id, j_id } = req.body;
-
+    let { u_id,hr_id,j_id } = req.body;
+     console.log("📥 Received data:", req.body); 
     // Validate input
-    if (!u_id || !j_id) {
+    if (!u_id ||!hr_id ||!j_id) {
+        console.log( u_id,hr_id,j_id);
         return res.json({ msg: "User ID and Job ID are required" });
     }
-
     // Call the model to apply for the job
     let promise=applicationModel.checkAlreadyApplied(u_id, j_id)
     promise.then((result) => {
@@ -93,7 +56,7 @@ exports.applyForJob = (req, res) => {
             return res.status(400).json({ msg: "You have already applied for this job" });
         }
          else {
-             return  applicationModel.applyForJob(u_id, j_id)
+             return  applicationModel.applyForJob(u_id,hr_id,j_id)
              .then(()=> {
                 // Job application successful
                 res.status(200).json({ msg: "Job application successful" });
@@ -110,22 +73,62 @@ exports.applyForJob = (req, res) => {
  * Retrieves all jobs applied by the user.
  */
 exports.viewApplicationsHistory = (req, res) => {   
-    let { u_id } = req.body;
+    const u_id = req.params.u_id;  // just take it directly
 
-    // Validate input
     if (!u_id) {
-        return res.json({ msg: "User ID is required" });
+        return res.status(400).json({ msg: "User ID is required" });
     }
 
-    // Call the model to get applied jobs
-    let promise = applicationModel.viewApplicationsHistory(u_id);
-    promise.then((result) => {
-        if (result.length > 0) {
-            res.status(200).json({ msg: "Applied jobs fetched successfully", data: result });
-        } else {
-            res.status(404).json({ msg: "No jobs found for this user" });
-        }
-    }).catch((err) => {
-        res.status(500).json({ error: err.message });
-    });
+    applicationModel.viewApplicationsHistory(u_id)
+        .then(result => {
+            if (result.length > 0) {
+                res.status(200).json({ msg: "Applied jobs fetched successfully", data: result });
+            } else {
+                res.status(404).json({ msg: "No jobs found for this user" });
+            }
+        })
+        .catch(err => {
+            res.status(500).json({ error: err.message });
+        });
+}
+
+
+exports.getUserProfile = (req, res) => {
+  try {
+    
+    const user = {
+      uid: req.user.uid,
+      name: req.user.name,      
+      email: req.user.email,
+      contact: req.user.contact ,
+      skills:req.user.skills,
+      education:req.user.education
+    };
+
+    res.json({ msg: "Profile loaded successfully", user });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
+};
+
+exports.updateUser=(req,res)=>{
+    const {uid} =req.user;
+    const{name,email,contact,password,skills,education}=req.body;
+
+    if(!name||!email||!contact||!password||!skills||!education)
+    {
+        return res.status(400).json({ msg: "All fields are required" });
+    }
+
+    let promise=userModel.updateUser(uid,name,email,contact,password,skills,education);
+    promise.then(()=>{
+         res.json({
+        msg: "Profile updated successfully",
+        user: { uid, name, email, contact,password,skills,education}
+      })
+    })
+      .catch((err)=>{
+        res.status(500).json({ msg: "DB error", error: err.message || err });
+      })
+
 }

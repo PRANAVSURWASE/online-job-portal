@@ -1,26 +1,34 @@
 let adminModel=require("../models/adminModel");
 
-/**
- * Admin Login
- * Authenticates admin using username and password.
- */
 
-exports.adminLogin=(req,res)=>{
-    
-        let {u_name,password}=req.body;
-       
-     let promise=adminModel.adminLogin(u_name,password);
-    promise.then((result)=>{
-        if(result.length>0){
-            res.json({ msg: "Login successful" });
-        }else{
-            res.json({msg:"User or password is incorrect"});
-        }
-    }).catch((err)=>{
-        res.json({msg:"Internal server Error ",error:err.message||err});
-    })
-}
+exports.getAdmin = async (req, res) => {
+  try {
+    const admin = await adminModel.getAdmin();
 
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    res.json({ msg: "Admin Profile Loaded successfully", admin });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong", error: err });
+  }
+};
+
+
+exports.getAdminStats = async (req, res) => {
+  try {
+    const [userCount, hrCount, jobCount] = await Promise.all([
+      adminModel.getUserCount(),
+      adminModel.getHRCount(),
+      adminModel.getJobCount(),
+    ]);
+
+    res.json({ userCount, hrCount, jobCount });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch admin stats", error: err.message });
+  }
+};
 /**
  * View all HRs
  * Fetches all HR records from the database.
@@ -43,7 +51,7 @@ exports.viewHR=(req,res)=>{
  * Deletes an HR by hr_id.
  */
 exports.deleteHR=(req,res)=>{
-    let {hr_id}=req.body;
+    let {hr_id}=req.params;
    
     // Validate input
     if(!hr_id){
@@ -111,3 +119,4 @@ exports.addHR = (req, res) => {
         res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+

@@ -1,14 +1,25 @@
 let db=require("../../db.js");
 
+
+exports.getAdmin = () => {
+  return new Promise((resolve, reject) => {
+    const query = "SELECT email FROM admin LIMIT 1"; 
+    db.query(query, (err, result) => {
+      if (err) return reject(err);
+      resolve(result[0]);
+    });
+  });
+};
 /**
  * Admin Login
  * Authenticates admin using username and password.
  * Returns a promise that resolves with the admin records if found.
  */
-exports.adminLogin=(u_name,password)=>{
+
+exports.adminLogin=(email,password)=>{
         return new Promise((resolve,reject)=>{
         
-        db.query("select * from admin where u_name=? and password=?",[u_name,password],(err,result)=>{
+        db.query("select * from admin where email=? and password=?",[email,password],(err,result)=>{
             console.log(err,result);
             if(err){
                 reject(err); 
@@ -89,3 +100,43 @@ exports.addHR=(name, company_name, password, contact, email)=>{
         });
     });
 }
+
+exports.findAdminByName = (email) => {
+  console.log("Finding Admin by email:",email);
+  
+  return new Promise((resolve, reject) => {
+    db.query("SELECT * FROM admin WHERE email = ?", [email], (err, results) => {
+      if (err) return reject(err);
+      resolve(results);
+    });
+  });
+}
+
+exports.getUserCount = () => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT COUNT(*) AS count FROM user", (err, result) => {
+      if (err) reject(err);
+      else resolve(result[0].count);
+    });
+  });
+};
+
+// Count total HRs
+exports.getHRCount = () => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT COUNT(*) AS count FROM hr", (err, result) => {
+      if (err) reject(err);
+      else resolve(result[0].count);
+    });
+  });
+};
+
+// Count total jobs
+exports.getJobCount = () => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT COUNT(*) AS count FROM job", (err, result) => {
+      if (err) reject(err);
+      else resolve(result[0].count);
+    });
+  });
+};

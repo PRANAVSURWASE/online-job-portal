@@ -2,7 +2,7 @@ let db =require("../../db.js");
 
 exports.viewAllJobs = () => {
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM job", (err, result) => {
+        db.query("select j.j_id,j.j_name,j.skills,j.location,h.company_name FROM job j JOIN hr h ON  j.hr_id = h.hr_id; ", (err, result) => {
             if (err) {
                 reject(err);
             } else {
@@ -11,3 +11,4 @@ exports.viewAllJobs = () => {
         });
     });
 }
+

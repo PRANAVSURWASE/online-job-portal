@@ -1,6 +1,8 @@
 let jobModel = require('../models/jobModel.js');
 
 exports.viewAllJobs = (req, res) => {
+    
+    
     let promise = jobModel.viewAllJobs();
     promise.then((result) => {
         if(result.length > 0) {   
