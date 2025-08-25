@@ -3,7 +3,7 @@ A full-stack web application that connects job seekers with employers. Built usi
 
 # 🧑‍💼 Online Job Portal
 
-A full-stack web application that connects job seekers with employers. Built using **Node.js**, **Express.js**, **MySQL**, and **EJS**, it allows users to register, apply for jobs, and track applications, while HRs can post and manage job listings. Admins have access to platform-wide management.
+A full-stack web application that connects job seekers with employers. Built using **Node.js**, **Express.js**, **MySQL**, and **React.js**, it allows users to register, apply for jobs, and track applications, while HRs can post and manage job listings. Admins have access to platform-wide management.
 
 ---
 
@@ -33,7 +33,7 @@ A full-stack web application that connects job seekers with employers. Built usi
 
 | Layer     | Technology                  |
 |-----------|-----------------------------|
-| Frontend  | HTML, CSS, JavaScript, EJS  |
+| Frontend  | HTML, CSS, JavaScript, React.js |
 | Backend   | Node.js, Express.js         |
 | Database  | MySQL                       |
 | Styling   | Bootstrap                   |
