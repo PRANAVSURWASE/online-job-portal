@@ -141,7 +141,7 @@ const JobSeekerProfile = () => {
         </div>
 
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
-          <h3 className="mb-4">Welcome 🤵‍♂️ {user.name}</h3>
+          <h3 className="mb-4">Welcome 🤵 {user.name}</h3>
           <ul className="list-unstyled">
             <li>
               <strong>Name:</strong> {user.name}
