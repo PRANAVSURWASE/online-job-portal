@@ -14,7 +14,8 @@ router.delete("/deleteJob/:job_id", hrCtrl.deleteJobById)
 router.post("/searchJob/:job_name", hrCtrl.searchJobsByName)
 router.post('/scheduleInterview', scheduleCtrl.scheduleInterview);
 router.post('/completed-interviews',scheduleCtrl.getCompletedInterviews)
-router.put('/updateJob/:job_id', scheduleCtrl.updateInterviewStatus)
+router.put('/updateJob/:j_id', scheduleCtrl.updateInterviewStatus)
+router.get("/getApplicants",hrCtrl.getJobsAppliedByUser);
 
 
 module.exports=router;

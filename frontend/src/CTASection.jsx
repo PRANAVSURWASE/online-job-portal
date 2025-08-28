@@ -48,7 +48,7 @@ const CTASection = () => {
           </Col>
         </Row>
         
-        {/* Bottom CTA */}
+       
         <Row>
           <Col lg={8} className="mx-auto text-center">
             <h2 className="display-6 fw-bold mb-3">Ready to Get Started?</h2>

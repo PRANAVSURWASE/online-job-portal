@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { getAllJobs } from "./services/jobService";
 import { Card, Row, Col, Alert, Badge } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const ViewJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllJobs()
@@ -19,6 +21,8 @@ const ViewJobs = () => {
         setError("Failed to fetch jobs");
       });
   }, []);
+
+
 
   return (
     <div className="container" style={{ marginTop: "70px" }}>
@@ -60,7 +64,7 @@ const ViewJobs = () => {
 
         
         <div>
-          <button className="btn btn-primary px-4 py-2">Apply Now</button>
+          <button className="btn btn-primary px-4 py-2" onClick={() => navigate('/jobseeker-login')}>Apply Now</button>
         </div>
       </div>
     </div>

@@ -106,10 +106,10 @@ const EmployerProfile = () => {
           </button>
         </div>
 
-        {/* Main Content */}
+        
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
-            {/* Tabs */}
+           
             <div className="d-flex mb-3">
               <button
                 className={`btn me-2 ${
@@ -129,11 +129,11 @@ const EmployerProfile = () => {
               </button>
             </div>
 
-            {/* Jobs Tab */}
+           
             {activeTab === "jobs" && (
               <div>
                 <button
-                  className="btn btn-success mb-3"
+                  className="btn btn-primary mb-3"
                   onClick={() => setShowJobForm(!showJobForm)}
                 >
                   {showJobForm ? "Cancel" : "Create Job"}
@@ -192,13 +192,25 @@ const EmployerProfile = () => {
                         <h4><strong>Role:</strong> {job.j_name}</h4>
                         <p className="mb-1"><strong>Location:</strong> {job.location}</p>
                         <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
-                        <p className="mb-1"><strong>Posted On:</strong> {job.posted_date}</p>
+                        <p className="mb-1">
+                        <strong>Posted On:</strong>{" "}
+                        {new Date(job.posted_date).toLocaleString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                        })}
+                        </p>
                         <button
-                          className="btn btn-danger btn-sm mt-2"
+                          className="btn btn-danger btn-sm mt-2 me-2"
                           onClick={() => handleDeleteJob(job.j_id)}
                         >
                           Delete Job
                         </button>
+                        
+                        <button className="btn btn-primary btn-sm mt-2" >Update</button>
                       </li>
                     ))}
                   </ul>
@@ -208,7 +220,7 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            {/* Interviews Tab */}
+            
             {activeTab === "interviews" && (
               <div>
                 <p>Coming soon: Scheduled Interviews list here...</p>

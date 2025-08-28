@@ -1,4 +1,5 @@
 let hrModel=require("../models/hrModel");
+let applicationModel=require("../models/applicationModel")
 let jwt = require('jsonwebtoken');
 
 /**
@@ -154,4 +155,27 @@ exports.searchJobsByName = (req, res) => {
     }).catch((err) => {
         res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
+}
+exports.getJobsAppliedByUser = (req,res)=>
+    {
+    const token = req.headers.authorization.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ msg: "Token missing" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const hr_id = decoded.id; // Extract HR ID from the token
+
+        let promise = applicationModel.getJobsAppliedByUser(hr_id);
+        promise.then((result) => {
+            res.status(201).json({ 
+                msg: "Applied users fetched successfully", 
+                apply_jobs:result, 
+            });
+        }).catch((err) => {
+            console.error(err);
+            res.status(500).json({ msg: "Internal server error", error: err.message || err });
+        });
+
+
+
 }
