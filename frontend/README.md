@@ -1,4 +1,4 @@
-# online-job-portal
+# online-job-portal (WEB APPLICATION)
 A full-stack web application that connects job seekers with employers. Built using Node.js, Express.js, MySQL, and EJS, it supports user registration, job posting, application tracking, and admin-level management.
 
 # 🧑‍💼 Online Job Portal
