@@ -19,10 +19,10 @@ exports.hrRegister=(name,company_name,password,contact,email,role)=>{
     });
 }
 
-exports.createJob=(hr_id, j_name,skills)=>{
+exports.createJob=(hr_id, j_name,skills,location)=>{
     return new Promise((resolve, reject) => {
-        db.query("INSERT INTO job (hr_id, j_name, skills ) VALUES (?, ?, ?)", 
-        [hr_id, j_name,skills], (err, result) => {
+        db.query("INSERT INTO job (hr_id, j_name, skills,location ) VALUES (?, ?, ?,?)", 
+        [hr_id, j_name,skills,location], (err, result) => {
             console.log(err, result);
             if (err) {
                 reject(err);
@@ -44,9 +44,9 @@ exports.listjobs=()=>{
         });
     });
 }
-exports.getJobById=(job_id)=>{
+exports.getJobById=(hr_id)=>{
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM job WHERE j_id = ?", [job_id], (err, result) => {
+        db.query("SELECT * FROM job WHERE hr_id = ?", [hr_id], (err, result) => {
             console.log(err, result);
             if (err) {
                 reject(err);
@@ -59,6 +59,7 @@ exports.getJobById=(job_id)=>{
 
 exports.deleteJobById=(j_id)=>{
     return new Promise((resolve, reject) => {
+        console.log("Deleting job with ID:", j_id);
         db.query("DELETE FROM job WHERE j_id = ?", [j_id], (err, result) => {
             console.log(err, result);
             if (err) {

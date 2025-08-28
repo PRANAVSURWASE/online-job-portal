@@ -47,25 +47,32 @@ exports.getHrProfile=(req,res)=>{
  * Allows HR to post a new job.
  */
 exports.createJob = (req, res) => {
-    let { hr_id, j_name,skills } = req.body;
-    console.log(req.body);
-    
-   
-    if (!hr_id || !j_name  || !skills ) {
-        return res.json({ msg: "All fields are required" });
-    }
-    
-    let promise = hrModel.createJob(hr_id, j_name, skills);
-    promise.then((result) => {
-        if (result.affectedRows > 0) {
-            res.status(200).json({ msg: "Job posted successfully" });
-        } else {
-            res.status(401).json({ msg: "Job creation failed" });
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ msg: "Token missing" });
         }
-    }).catch((err) => {
-        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
-    });
-}
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const hr_id = decoded.id; // Extract HR ID from the token
+        const { j_name,skills, location  } = req.body;
+        if (!j_name || !location || !skills) {
+            return res.status(400).json({ msg: "All fields are required" });
+        }
+        let promise = hrModel.createJob( hr_id, j_name, skills,location );
+        promise.then((result) => {
+            res.status(201).json({ 
+                msg: "Job created successfully", 
+                job: { j_id: result.insertId, hr_id, j_name,skills, location } 
+            });
+        }).catch((err) => {
+            console.error(err);
+            res.status(500).json({ msg: "Internal server error", error: err.message || err });
+        });
+
+    } catch (err) {
+        res.status(500).json({ msg: "Token error", error: err });
+    }
+};
 
 /**
  * List Jobs
@@ -86,14 +93,17 @@ exports.listjobs = (req, res) => {
 }
 
 exports.getJobById = (req, res) => {
-    let { j_id } = req.body;
-
-    // Validate input
-    if (!j_id) {
+    const token = req.headers.authorization.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ msg: "Token missing" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const hr_id = decoded.id; 
+    if (!hr_id) {
         return res.json({ msg: "Job ID is required" });
     }
 
-    let promise = hrModel.getJobById(j_id);
+    let promise = hrModel.getJobById(hr_id);
     promise.then((result) => {
         if (result.length > 0) {
             res.status(200).json({ msg: "Job details fetched successfully", data: result });
@@ -106,13 +116,13 @@ exports.getJobById = (req, res) => {
 }
 
 exports.deleteJobById = (req, res) => {
-    let { j_id } = req.body;
-
-    // Validate input
+    console.log("here => ",req.params.j_id);
+    
+    let { j_id } = req.params;
+    j_id = parseInt(j_id);
     if (!j_id) {
         return res.json({ msg: "Job ID is required" });
     }
-
     let promise = hrModel.deleteJobById(j_id);
     promise.then((result) => {
         if (result.affectedRows > 0) {

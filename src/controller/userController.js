@@ -42,21 +42,32 @@ exports.registerUser = (req, res) => {
 
 
 exports.applyForJob = (req, res) => {
-    let { u_id,hr_id,j_id } = req.body;
-     console.log("📥 Received data:", req.body); 
+
+     // Get token from headers
+        const token = req.headers["authorization"]?.split(" ")[1]; // Expecting "Bearer <token>"
+        if (!token) {
+            return res.status(401).json({ msg: "No token provided" });
+        }
+         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const uid = decoded.uid;   // get user id from token
+        console.log("decoded id ",uid);
+        const { hr_id, j_id } = req.body;  // these still come from body
+
+
+    
     // Validate input
-    if (!u_id ||!hr_id ||!j_id) {
-        console.log( u_id,hr_id,j_id);
+    if (!uid ||!hr_id ||!j_id) {
+        console.log( uid,hr_id,j_id);
         return res.json({ msg: "User ID and Job ID are required" });
     }
     // Call the model to apply for the job
-    let promise=applicationModel.checkAlreadyApplied(u_id, j_id)
+    let promise=applicationModel.checkAlreadyApplied(uid, j_id)
     promise.then((result) => {
         if(result.length > 0) {
             return res.status(400).json({ msg: "You have already applied for this job" });
         }
          else {
-             return  applicationModel.applyForJob(u_id,hr_id,j_id)
+             return  applicationModel.applyForJob(uid,hr_id,j_id)
              .then(()=> {
                 // Job application successful
                 res.status(200).json({ msg: "Job application successful" });
@@ -72,25 +83,42 @@ exports.applyForJob = (req, res) => {
  * View Applied Jobs
  * Retrieves all jobs applied by the user.
  */
-exports.viewApplicationsHistory = (req, res) => {   
-    const u_id = req.params.u_id;  // just take it directly
+exports.viewApplicationsHistory = (req, res) => {
+    try {
+        // Get token from headers
+        const token = req.headers["authorization"]?.split(" ")[1]; 
+        if (!token) {
+            return res.status(401).json({ msg: "No token provided" });
+        }
 
-    if (!u_id) {
-        return res.status(400).json({ msg: "User ID is required" });
+        // Decode JWT to get user id
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const uid = decoded.uid;   // Always from token, not params
+
+        // Call model
+        applicationModel.viewApplicationsHistory(uid)
+            .then(result => {
+                if (result.length > 0) {
+                    res.status(200).json({ 
+                        msg: "Applied jobs fetched successfully", 
+                        data: result 
+                    });
+                } else {
+                    res.status(404).json({ msg: "No jobs found for this user" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({ 
+                    msg: "Internal server error", 
+                    error: err.message 
+                });
+            });
+
+    } catch (err) {
+        res.status(401).json({ msg: "Invalid token", error: err.message });
     }
+};
 
-    applicationModel.viewApplicationsHistory(u_id)
-        .then(result => {
-            if (result.length > 0) {
-                res.status(200).json({ msg: "Applied jobs fetched successfully", data: result });
-            } else {
-                res.status(404).json({ msg: "No jobs found for this user" });
-            }
-        })
-        .catch(err => {
-            res.status(500).json({ error: err.message });
-        });
-}
 
 
 exports.getUserProfile = (req, res) => {
