@@ -186,10 +186,7 @@ const AdminProfile = () => {
             View HR
           </Button>
         </div>
-      </div>
-
-     
-      <Row>
+            <Row>
         {statCards.map((stat, index) => (
           <Col key={index} lg={4} md={6} className="mb-4">
             <Card className="h-100 border-0 shadow-sm text-center p-4 card-hover">
@@ -210,6 +207,10 @@ const AdminProfile = () => {
           </Col>
         ))}
       </Row>
+      </div>
+
+     
+  
    {showForm && (
   <Card className="shadow-lg border-0 mt-4">
     <Card.Header className="bg-primary text-white text-center fw-bold">
