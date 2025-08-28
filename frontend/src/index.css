@@ -78,3 +78,6 @@ body {
     font-size: 1.1rem !important;
   }
 }
+.shifted-div {
+  margin-top: 60px; /* adjust as needed */
+}

@@ -152,7 +152,8 @@ const AdminProfile = () => {
   ];
 
   return (
-    <Container className="mt-5">
+    <Container style={{ marginTop: "65px" }}>
+
       
       <div className="card shadow-lg p-4 mb-5 text-center">
         <h2 className="mb-3">Admin Profile</h2>
@@ -186,7 +187,8 @@ const AdminProfile = () => {
             View HR
           </Button>
         </div>
-            <Row>
+        <div className="shifted-div">
+          <Row>  
         {statCards.map((stat, index) => (
           <Col key={index} lg={4} md={6} className="mb-4">
             <Card className="h-100 border-0 shadow-sm text-center p-4 card-hover">
@@ -207,6 +209,8 @@ const AdminProfile = () => {
           </Col>
         ))}
       </Row>
+      </div>
+      
       </div>
 
      
