@@ -1,12 +1,59 @@
-# React + Vite
+# online-job-portal
+A full-stack web application that connects job seekers with employers. Built using Node.js, Express.js, MySQL, and EJS, it supports user registration, job posting, application tracking, and admin-level management.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🧑‍💼 Online Job Portal
 
-Currently, two official plugins are available:
+A full-stack web application that connects job seekers with employers. Built using **Node.js**, **Express.js**, **MySQL**, and **EJS**, it allows users to register, apply for jobs, and track applications, while HRs can post and manage job listings. Admins have access to platform-wide management.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## 🚀 Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 👨‍💻 Job Seeker (User)
+- User registration and login
+- Create and update profile
+- Browse and filter jobs
+- Apply for jobs
+- Save/bookmark jobs
+
+### 🧑‍💼 HR (Employer)
+- HR registration and login
+- Post new jobs
+- View applicants
+- Manage job listings
+
+### 🛠️ Admin
+- Monitor users and HRs
+- Manage job listings
+- Remove spam/fake accounts
+
+---
+
+## 🏗️ Technologies Used
+
+| Layer     | Technology                  |
+|-----------|-----------------------------|
+| Frontend  | HTML, CSS, JavaScript, EJS  |
+| Backend   | Node.js, Express.js         |
+| Database  | MySQL                       |
+| Styling   | Bootstrap                   |
+| Tools     | VS Code, GitHub, Postman    |
+
+---
+
+## 🗂️ Project Structure
+
+online-job-portal/
+├── backend/
+│ ├── routes/
+│ ├── controllers/
+│ ├── models/
+│ └── server.js
+├── frontend/
+│ ├── views/ # EJS templates
+│ └── public/ # Static assets
+├── database/
+│ └── job_portal.sql
+├── README.md
+├── package.json
+└── .gitignore
