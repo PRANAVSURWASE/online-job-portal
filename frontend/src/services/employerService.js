@@ -40,3 +40,10 @@ export const deleteJob =(j_id,token)=>{
      headers:{ Authorization:`Bearer ${token}`},
 });
 }
+
+export const getApplicants =(token)=>{
+  let promise=axios.get("http://localhost:4000/hr/getApplicants",{
+    headers:{ Authorization:`Bearer ${token}`},
+  })
+  return promise;
+};

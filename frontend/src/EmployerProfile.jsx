@@ -5,6 +5,7 @@ import {
   getEmployerJobs,
   deleteJob,
   createJob,
+  getApplicants 
 } from "./services/employerService";
 
 const EmployerProfile = () => {
@@ -19,6 +20,8 @@ const EmployerProfile = () => {
     location: "",
     skills: "",
   });
+  const [applicants, setApplicants] = useState([]);
+
 
   const navigate = useNavigate();
 
@@ -49,6 +52,19 @@ const EmployerProfile = () => {
       .catch(() => setError("Failed to load jobs."))
       .finally(() => setLoading(false));
   }, []);
+
+   useEffect(() => {
+    if (activeTab === "applicants") {
+      const token = sessionStorage.getItem("employerToken");
+      if (!token) return;
+
+      setLoading(true);
+      getApplicants(token)
+        .then((res) => setApplicants(res.data.apply_jobs || []))
+        .catch(() => setError("Failed to load applicants."))
+        .finally(() => setLoading(false));
+    }
+  }, [activeTab]);
 
   // Delete Job
   const handleDeleteJob = (j_id) => {
@@ -120,13 +136,17 @@ const EmployerProfile = () => {
                 My Jobs
               </button>
               <button
-                className={`btn ${
+                className={`btn me-2 ${
                   activeTab === "interviews" ? "btn-primary" : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("interviews")}
               >
                 Scheduled Interviews
               </button>
+              <button
+              className={`btn ${activeTab === "applicants" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setActiveTab("applicants")}
+               >Applicants</button>
             </div>
 
            
@@ -226,6 +246,44 @@ const EmployerProfile = () => {
                 <p>Coming soon: Scheduled Interviews list here...</p>
               </div>
             )}
+
+            {activeTab === "applicants" && (
+  <div>
+    {loading ? (
+      <p>Loading applicants...</p>
+    ) : applicants.length > 0 ? (
+      <ul className="list-group">
+        {applicants.map((applicant, i) => (
+          <li key={i} className="list-group-item">
+            <p><strong>Name:</strong> <span className="ms-2">{applicant.name}</span></p>
+            <p><strong>Contact:</strong> {applicant.contact}</p>
+            <p><strong>Applied For:</strong> {applicant.j_name}</p>
+            <p>
+              <strong>Applied On:</strong>{" "}
+              {new Date(applicant.apply_date).toLocaleString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+            
+             <button
+                className="btn btn-success btn-sm"
+                onClick={() => handleSchedule(applicant)}
+                > Schedule Interview
+              </button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No applicants found yet.</p>
+    )}
+  </div>
+)}
+
           </div>
         </div>
       </div>

@@ -156,6 +156,7 @@ exports.searchJobsByName = (req, res) => {
         res.status(500).json({ msg: "Internal server Error", error: err.message || err });
     });
 }
+
 exports.getJobsAppliedByUser = (req,res)=>
     {
     const token = req.headers.authorization.split(" ")[1];
