@@ -3,17 +3,11 @@ const jwt = require("jsonwebtoken");
 let authenticateToken = (req, res, next) => {
   let authHeader = req.headers["authorization"];
   let token = authHeader && authHeader.split(" ")[1];
-  console.log("Token received:", token);
   
-
   if (!token) return res.status(401).json({ msg: "Token missing" });
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(403).json({ msg: "Invalid/Expired token" });
-
-
-    console.log("Decoded Token:",decoded.id );
-
     req.user = decoded;
     next();
   });
