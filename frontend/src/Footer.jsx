@@ -3,7 +3,7 @@ import { Briefcase, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram 
 
 const Footer = () => {
   return (
-    <footer className="footer-gradient text-white py-5">
+    <footer className=" text-black py-5">
       <Container>
         <Row>
           {/* Company Info */}
@@ -12,10 +12,7 @@ const Footer = () => {
               <Briefcase size={24} className="me-2" />
               <h5 className="mb-0 fw-bold">JobSpot</h5>
             </div>
-            <p className="mb-3">
-              Connecting talent with opportunity. Find your dream job or hire the perfect candidate 
-              with our comprehensive job portal platform.
-            </p>
+            
             
             {/* Contact Info */}
             <div className="mb-3">
@@ -54,11 +51,11 @@ const Footer = () => {
           <Col lg={2} md={6} className="mb-4">
             <h6 className="fw-bold mb-3">For Job Seekers</h6>
             <ul className="list-unstyled">
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Browse Jobs</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Career Advice</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Resume Builder</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Salary Guide</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Job Alerts</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none ">Browse Jobs</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Career Advice</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Resume Builder</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Salary Guide</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Job Alerts</a></li>
             </ul>
           </Col>
           
@@ -66,11 +63,11 @@ const Footer = () => {
           <Col lg={2} md={6} className="mb-4">
             <h6 className="fw-bold mb-3">For Employers</h6>
             <ul className="list-unstyled">
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Post a Job</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Browse Resumes</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Hiring Solutions</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Employer Branding</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Pricing</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Post a Job</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Browse Resumes</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Hiring Solutions</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Employer Branding</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Pricing</a></li>
             </ul>
           </Col>
           
@@ -78,11 +75,11 @@ const Footer = () => {
           <Col lg={2} md={6} className="mb-4">
             <h6 className="fw-bold mb-3">Company</h6>
             <ul className="list-unstyled">
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">About Us</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Careers</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Press</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Blog</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Contact</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">About Us</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Careers</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Press</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Blog</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Contact</a></li>
             </ul>
           </Col>
           
@@ -90,19 +87,16 @@ const Footer = () => {
           <Col lg={2} md={6} className="mb-4">
             <h6 className="fw-bold mb-3">Legal</h6>
             <ul className="list-unstyled">
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Privacy Policy</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Terms of Service</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Cookie Policy</a></li>
-              <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">Accessibility</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Privacy Policy</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Terms of Service</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Cookie Policy</a></li>
+              <li className="mb-2"><a href="#" className="d-flex align-items-center mb-2 text-decoration-none">Accessibility</a></li>
             </ul>
           </Col>
         </Row>
-        
-        {/* Bottom Bar */}
-        <hr className="my-4 border-white-50" />
         <Row>
           <Col md={6}>
-            <p className="mb-0 text-white-50">
+            <p className="d-flex align-items-center mb-2 text-decoration-none">
               © 2025 JobSpot. All rights reserved.
             </p>
           </Col>
