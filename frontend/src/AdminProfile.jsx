@@ -130,23 +130,25 @@ const AdminProfile = () => {
 
   const statCards = [
     {
-      icon: Users,
-      title: "Total Users",
-      count: stats.userCount,
-      description: "Registered job seekers on the platform",
+      icon: Briefcase,
+      title: "Total Jobs",
+      count: stats.jobCount,
+      description: "Jobs posted on the platform",
     },
-    {
+       {
       icon: UserCheck,
       title: "Total HRs",
       count: stats.hrCount,
       description: "HR accounts managing job postings",
     },
     {
-      icon: Briefcase,
-      title: "Total Jobs",
-      count: stats.jobCount,
-      description: "Jobs posted on the platform",
-    },
+      icon: Users,
+      title: "Total Users",
+      count: stats.userCount,
+      description: "Registered job seekers on the platform",
+    }
+ 
+    
   ];
 
   return (
