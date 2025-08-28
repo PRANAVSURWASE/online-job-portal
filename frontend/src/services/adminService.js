@@ -28,6 +28,6 @@ export const deleteHR = (hr_id) => {
 };
 
 export const updateHR =(hrData)=>{
-  return axios.post("http://localhost:4000/admin/addHR",hrData)
+  return axios.put("http://localhost:4000/admin/updateHR",hrData)
   
 }
