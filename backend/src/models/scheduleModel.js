@@ -2,7 +2,7 @@ let db = require("../../db.js");
 
 exports.hasAppliedForJob = (uid, j_id) => {
     return new Promise((resolve, reject) => {
-        db.query("select * from apply_jobs where u_id = ? AND j_id = ?", 
+        db.query("select * from apply_jobs where uid = ? AND j_id = ?", 
         [uid, j_id], (err, result) => {
             if (err) {
                 reject(err);
