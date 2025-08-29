@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate ,} from "react-router-dom";
-import { Modal, Button, Form } from "react-bootstrap";
-import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants } from "./services/employerService";
-import { scheduleInterview } from "./services/scheduleServices";
-
+import { useNavigate } from "react-router-dom";
+import {
+  getEmployerProfile,
+  getEmployerJobs,
+  deleteJob,
+  createJob,
+  getApplicants 
+} from "./services/employerService";
 
 const EmployerProfile = () => {
   const [employer, setEmployer] = useState(null);
@@ -18,18 +21,6 @@ const EmployerProfile = () => {
     skills: "",
   });
   const [applicants, setApplicants] = useState([]);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
-   const [selectedApplicant, setSelectedApplicant] = useState(null);
-
-     const [scheduleForm, setScheduleForm] = useState({
-      date: "",
-      time: "",
-      mode: "ONLINE",
-      location: "",
-      meetingLink: "",
-      notes: "",
-  });
-
 
 
   const navigate = useNavigate();
@@ -62,7 +53,7 @@ const EmployerProfile = () => {
       .finally(() => setLoading(false));
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (activeTab === "applicants") {
       const token = sessionStorage.getItem("employerToken");
       if (!token) return;
@@ -80,7 +71,7 @@ const EmployerProfile = () => {
     console.log("Deleting job with ID:", j_id);
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-    console.log("Token:",token);
+    console.log("Token:", token);
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -97,7 +88,7 @@ const EmployerProfile = () => {
     createJob(jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job created successfully");
-        setJobs((prev) => [...prev, res.data.job]); 
+        setJobs((prev) => [...prev, res.data.job]);
         setShowJobForm(false);
         setJobForm({ j_name: "", location: "", skills: "" });
       })
@@ -150,17 +141,24 @@ const EmployerProfile = () => {
   return (
     <div className="container-fluid" style={{ marginTop: "80px" }}>
       <div className="row">
-        
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
           <h3 className="mb-4">Welcome 🤵‍♂️ </h3>
           <h3><p><strong>{employer.name}</strong></p></h3>
           <ul className="list-unstyled">
-            <li><strong>Name:</strong> {employer.name}</li>
-            <li><strong>Email:</strong> {employer.email}</li>
-            <li><strong>Contact:</strong> {employer.contact}</li>
-            <li><strong>Company:</strong> {employer.company_name}</li>
+            <li>
+              <strong>Name:</strong> {employer.name}
+            </li>
+            <li>
+              <strong>Email:</strong> {employer.email}
+            </li>
+            <li>
+              <strong>Contact:</strong> {employer.contact}
+            </li>
+            <li>
+              <strong>Company:</strong> {employer.company_name}
+            </li>
           </ul>
-        
+
           <button
             className="btn btn-danger w-100"
             onClick={() => {
@@ -172,10 +170,8 @@ const EmployerProfile = () => {
           </button>
         </div>
 
-        
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
-           
             <div className="d-flex mb-3">
               <button
                 className={`btn me-2 ${
@@ -187,19 +183,26 @@ const EmployerProfile = () => {
               </button>
               <button
                 className={`btn me-2 ${
-                  activeTab === "interviews" ? "btn-primary" : "btn-outline-primary"
+                  activeTab === "interviews"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("interviews")}
               >
                 Scheduled Interviews
               </button>
               <button
-              className={`btn ${activeTab === "applicants" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setActiveTab("applicants")}
-               >Applicants</button>
+                className={`btn ${
+                  activeTab === "applicants"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                }`}
+                onClick={() => setActiveTab("applicants")}
+              >
+                Applicants
+              </button>
             </div>
 
-           
             {activeTab === "jobs" && (
               <div>
                 <button
@@ -264,7 +267,8 @@ const EmployerProfile = () => {
                         <h4><strong>Role:</strong> {job.j_name}</h4>
                         <p className="mb-1"><strong>Location:</strong> {job.location}</p>
                         <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
-                        <p className="mb-1"><strong>Posted On:</strong>{" "}
+                        <p className="mb-1">
+                        <strong>Posted On:</strong>{" "}
                         {new Date(job.posted_date).toLocaleString("en-US", {
                         day: "2-digit",
                         month: "short",
@@ -274,14 +278,18 @@ const EmployerProfile = () => {
                         hour12: true,
                         })}
                         </p>
-                        <button
-                          className="btn btn-danger btn-sm mt-2 me-2"
-                          onClick={() => handleDeleteJob(job.j_id)}
-                        >
-                          Delete Job
-                        </button>
-                        
-                        <button className="btn btn-primary btn-sm mt-2" >Update</button>
+                        <div className="d-flex mt-2">
+                          <button
+                            className="btn btn-danger btn-sm me-2"
+                            onClick={() => handleDeleteJob(job.j_id)}
+                          >
+                            Delete Job
+                          </button>
+
+                          <button className="btn btn-primary btn-sm">
+                            Update
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -291,7 +299,6 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            
             {activeTab === "interviews" && (
               <div>
                 <p>Coming soon: Scheduled Interviews list here...</p>
@@ -307,7 +314,6 @@ const EmployerProfile = () => {
         {applicants.map((applicant, i) => (
           <li key={i} className="list-group-item">
             <p><strong>Name:</strong> <span className="ms-2">{applicant.name}</span></p>
-            <p><strong>Email:</strong> {applicant.email}</p>
             <p><strong>Contact:</strong> {applicant.contact}</p>
             <p><strong>Applied For:</strong> {applicant.j_name}</p>
             <p>
@@ -335,86 +341,6 @@ const EmployerProfile = () => {
     )}
   </div>
 )}
-  <Modal show={showScheduleModal} onHide={() => setShowScheduleModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>
-      Schedule Interview {selectedApplicant ? `for ${selectedApplicant.name}` : ""}
-    </Modal.Title>
-  </Modal.Header>
-  <Form onSubmit={submitSchedule}>
-    <Modal.Body>
-      <Form.Group className="mb-2">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="date"
-          value={scheduleForm.date}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2">
-        <Form.Label>Time</Form.Label>
-        <Form.Control
-          type="time"
-          value={scheduleForm.time}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
-          required
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2">
-        <Form.Label>Mode</Form.Label>
-        <Form.Select
-          value={scheduleForm.mode}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, mode: e.target.value })}
-          required
-        >
-          <option value="ONLINE">ONLINE</option>
-          <option value="OFFLINE">OFFLINE</option>
-        </Form.Select>
-      </Form.Group>
-
-      <Form.Group className="mb-2">
-        <Form.Label>Location</Form.Label>
-        <Form.Control
-          type="text"
-          value={scheduleForm.location}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2">
-        <Form.Label>Meeting Link</Form.Label>
-        <Form.Control
-          type="text"
-          value={scheduleForm.meetingLink}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, meetingLink: e.target.value })}
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-2">
-        <Form.Label>Notes</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={2}
-          value={scheduleForm.notes}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, notes: e.target.value })}
-        />
-      </Form.Group>
-    </Modal.Body>
-
-    <Modal.Footer>
-      <Button variant="secondary" onClick={() => setShowScheduleModal(false)}>
-        Cancel
-      </Button>
-      <Button type="submit" variant="success">
-        Save
-      </Button>
-    </Modal.Footer>
-  </Form>
-</Modal>
-
 
           </div>
         </div>

@@ -59,17 +59,15 @@ const JobSeekerEditProfile = () => {
         setMsg(err.response?.data?.msg || " Something went wrong!");
         setAlertType("danger");
 
-       
         setTimeout(() => setMsg(""), 3000);
       });
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container " style={{ marginTop: "80px" }}>
       <div className="card shadow p-4 col-md-6 offset-md-3">
         <h2 className="text-center mb-4">Edit Profile</h2>
 
-        
         {msg && (
           <div className={`alert alert-${alertType} text-center`} role="alert">
             {msg}
@@ -77,7 +75,6 @@ const JobSeekerEditProfile = () => {
         )}
 
         <form onSubmit={handleSubmit}>
-         
           <div className="mb-3">
             <label className="form-label">Full Name</label>
             <input
@@ -91,7 +88,6 @@ const JobSeekerEditProfile = () => {
             />
           </div>
 
-         
           <div className="mb-3">
             <label className="form-label">Email</label>
             <input
@@ -146,9 +142,22 @@ const JobSeekerEditProfile = () => {
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary w-100">
-            Save Changes
-          </button>
+          <div className="row">
+            <div className="col">
+              <button type="submit" className="btn btn-primary w-100">
+                Save Changes
+              </button>
+            </div>
+            <div className="col">
+              <button
+                type="button"
+                className="btn btn-secondary w-100"
+                onClick={() => window.history.back()}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </form>
       </div>
     </div>
