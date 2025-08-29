@@ -350,7 +350,7 @@ const AdminProfile = () => {
                     <td>
                         <div className="d-flex justify-content-center gap-2">
                           <Button
-                            variant="warning"
+                            variant="primary"
                             size="sm"
                             onClick={() => setEditData(hr)} // open edit form
                           >
