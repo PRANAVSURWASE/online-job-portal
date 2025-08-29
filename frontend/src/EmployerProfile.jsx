@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate ,} from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants   updateJob,   // ✅ import updateJob service
+import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants, updateJob,   // ✅ import updateJob service
 } from "./services/employerService";
 import { scheduleInterview } from "./services/scheduleServices";
 
