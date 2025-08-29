@@ -5,7 +5,7 @@ import {
   getEmployerJobs,
   deleteJob,
   createJob,
-  getApplicants 
+  getApplicants,
 } from "./services/employerService";
 
 const EmployerProfile = () => {
@@ -21,7 +21,6 @@ const EmployerProfile = () => {
     skills: "",
   });
   const [applicants, setApplicants] = useState([]);
-
 
   const navigate = useNavigate();
 
@@ -53,7 +52,7 @@ const EmployerProfile = () => {
       .finally(() => setLoading(false));
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (activeTab === "applicants") {
       const token = sessionStorage.getItem("employerToken");
       if (!token) return;
@@ -71,7 +70,7 @@ const EmployerProfile = () => {
     console.log("Deleting job with ID:", j_id);
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-    console.log("Token:",token);
+    console.log("Token:", token);
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -88,7 +87,7 @@ const EmployerProfile = () => {
     createJob(jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job created successfully");
-        setJobs((prev) => [...prev, res.data.job]); 
+        setJobs((prev) => [...prev, res.data.job]);
         setShowJobForm(false);
         setJobForm({ j_name: "", location: "", skills: "" });
       })
@@ -101,16 +100,23 @@ const EmployerProfile = () => {
   return (
     <div className="container-fluid" style={{ marginTop: "80px" }}>
       <div className="row">
-        
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
           <h3 className="mb-4">Welcome 🏢 {employer.name}</h3>
           <ul className="list-unstyled">
-            <li><strong>Name:</strong> {employer.name}</li>
-            <li><strong>Email:</strong> {employer.email}</li>
-            <li><strong>Contact:</strong> {employer.contact}</li>
-            <li><strong>Company:</strong> {employer.company_name}</li>
+            <li>
+              <strong>Name:</strong> {employer.name}
+            </li>
+            <li>
+              <strong>Email:</strong> {employer.email}
+            </li>
+            <li>
+              <strong>Contact:</strong> {employer.contact}
+            </li>
+            <li>
+              <strong>Company:</strong> {employer.company_name}
+            </li>
           </ul>
-        
+
           <button
             className="btn btn-danger w-100"
             onClick={() => {
@@ -122,10 +128,8 @@ const EmployerProfile = () => {
           </button>
         </div>
 
-        
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
-           
             <div className="d-flex mb-3">
               <button
                 className={`btn me-2 ${
@@ -137,19 +141,26 @@ const EmployerProfile = () => {
               </button>
               <button
                 className={`btn me-2 ${
-                  activeTab === "interviews" ? "btn-primary" : "btn-outline-primary"
+                  activeTab === "interviews"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("interviews")}
               >
                 Scheduled Interviews
               </button>
               <button
-              className={`btn ${activeTab === "applicants" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setActiveTab("applicants")}
-               >Applicants</button>
+                className={`btn ${
+                  activeTab === "applicants"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                }`}
+                onClick={() => setActiveTab("applicants")}
+              >
+                Applicants
+              </button>
             </div>
 
-           
             {activeTab === "jobs" && (
               <div>
                 <button
@@ -209,28 +220,38 @@ const EmployerProfile = () => {
                   <ul className="list-group">
                     {jobs.map((job) => (
                       <li key={job.j_id} className="list-group-item">
-                        <h4><strong>Role:</strong> {job.j_name}</h4>
-                        <p className="mb-1"><strong>Location:</strong> {job.location}</p>
-                        <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
+                        <h4>
+                          <strong>Role:</strong> {job.j_name}
+                        </h4>
                         <p className="mb-1">
-                        <strong>Posted On:</strong>{" "}
-                        {new Date(job.posted_date).toLocaleString("en-US", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                        })}
+                          <strong>Location:</strong> {job.location}
                         </p>
-                        <button
-                          className="btn btn-danger btn-sm mt-2 me-2"
-                          onClick={() => handleDeleteJob(job.j_id)}
-                        >
-                          Delete Job
-                        </button>
-                        
-                        <button className="btn btn-primary btn-sm mt-2" >Update</button>
+                        <p className="mb-1">
+                          <strong>Skills:</strong> {job.skills}
+                        </p>
+                        <p className="mb-1">
+                          <strong>Posted On:</strong>{" "}
+                          {new Date(job.posted_on).toLocaleString("en-US", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
+                        </p>
+                        <div className="d-flex mt-2">
+                          <button
+                            className="btn btn-danger btn-sm me-2"
+                            onClick={() => handleDeleteJob(job.j_id)}
+                          >
+                            Delete Job
+                          </button>
+
+                          <button className="btn btn-primary btn-sm">
+                            Update
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -240,7 +261,6 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            
             {activeTab === "interviews" && (
               <div>
                 <p>Coming soon: Scheduled Interviews list here...</p>
@@ -248,42 +268,53 @@ const EmployerProfile = () => {
             )}
 
             {activeTab === "applicants" && (
-  <div>
-    {loading ? (
-      <p>Loading applicants...</p>
-    ) : applicants.length > 0 ? (
-      <ul className="list-group">
-        {applicants.map((applicant, i) => (
-          <li key={i} className="list-group-item">
-            <p><strong>Name:</strong> <span className="ms-2">{applicant.name}</span></p>
-            <p><strong>Contact:</strong> {applicant.contact}</p>
-            <p><strong>Applied For:</strong> {applicant.j_name}</p>
-            <p>
-              <strong>Applied On:</strong>{" "}
-              {new Date(applicant.apply_date).toLocaleString("en-US", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })}
-            </p>
-            
-             <button
-                className="btn btn-success btn-sm"
-                onClick={() => handleSchedule(applicant)}
-                > Schedule Interview
-              </button>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>No applicants found yet.</p>
-    )}
-  </div>
-)}
+              <div>
+                {loading ? (
+                  <p>Loading applicants...</p>
+                ) : applicants.length > 0 ? (
+                  <ul className="list-group">
+                    {applicants.map((applicant, i) => (
+                      <li key={i} className="list-group-item">
+                        <p>
+                          <strong>Name:</strong>{" "}
+                          <span className="ms-2">{applicant.name}</span>
+                        </p>
+                        <p>
+                          <strong>Contact:</strong> {applicant.contact}
+                        </p>
+                        <p>
+                          <strong>Applied For:</strong> {applicant.j_name}
+                        </p>
+                        <p>
+                          <strong>Applied On:</strong>{" "}
+                          {new Date(applicant.apply_date).toLocaleString(
+                            "en-US",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )}
+                        </p>
 
+                        <button
+                          className="btn btn-success btn-sm"
+                          onClick={() => handleSchedule(applicant)}
+                        >
+                          {" "}
+                          Schedule Interview
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No applicants found yet.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
