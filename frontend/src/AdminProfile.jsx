@@ -178,159 +178,173 @@ const AdminProfile = () => {
       </div>
 
       {/* Add HR Form */}
-      {showForm && (
-        <Card className="shadow-lg border-0 mt-4">
-          <Card.Header className="bg-primary text-white text-center fw-bold">Add New HR</Card.Header>
-          <Card.Body>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>HR Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter HR name"
-                />
-              </Form.Group>
+{/* Add HR Modal */}
+<Modal show={showForm} onHide={() => setShowForm(false)} centered>
+  <Modal.Header closeButton className="bg-primary text-white">
+    <Modal.Title>Add New HR</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label>HR Name</Form.Label>
+        <Form.Control
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Enter HR name"
+        />
+      </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Company</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="company_name"
-                  value={formData.company_name}
-                  onChange={handleChange}
-                  placeholder="Enter company name"
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Company</Form.Label>
+        <Form.Control
+          type="text"
+          name="company_name"
+          value={formData.company_name}
+          onChange={handleChange}
+          placeholder="Enter company name"
+        />
+      </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter password"
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="Enter password"
+        />
+      </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Contact</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="contact"
-                  value={formData.contact}
-                  onChange={handleChange}
-                  placeholder="Enter contact number"
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Contact</Form.Label>
+        <Form.Control
+          type="text"
+          name="contact"
+          value={formData.contact}
+          onChange={handleChange}
+          placeholder="Enter contact number"
+        />
+      </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Enter email"
-                />
-              </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Email</Form.Label>
+        <Form.Control
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Enter email"
+        />
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowForm(false)}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={handleSubmit}>
+      Add HR
+    </Button>
+  </Modal.Footer>
+</Modal>
 
-              <div className="d-flex justify-content-end gap-2">
-                <Button variant="secondary" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={handleSubmit}>
-                  Add HR
-                </Button>
-              </div>
-            </Form>
-          </Card.Body>
-        </Card>
-      )}
 
       
-      {editData && (
-        <Card className="shadow-lg border-0 mt-4">
-          <Card.Header className="bg-primary text-white text-center fw-bold">Edit HR</Card.Header>
-          <Card.Body>
-            <Form>
-              <Form.Group className="mb-3">
-                <Form.Label>HR Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="name"
-                  value={editData.name}
-                  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-                />
-              </Form.Group>
+     {/* Edit HR Modal */}
+<Modal show={!!editData} onHide={() => setEditData(null)} centered>
+  <Modal.Header closeButton className="bg-primary text-white">
+    <Modal.Title>Edit HR</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {editData && (
+      <Form>
+        <Form.Group className="mb-3">
+          <Form.Label>HR Name</Form.Label>
+          <Form.Control
+            type="text"
+            name="name"
+            value={editData.name}
+            onChange={(e) =>
+              setEditData({ ...editData, [e.target.name]: e.target.value })
+            }
+          />
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Company</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="company_name"
-                  value={editData.company_name}
-                  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-                />
-              </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Company</Form.Label>
+          <Form.Control
+            type="text"
+            name="company_name"
+            value={editData.company_name}
+            onChange={(e) =>
+              setEditData({ ...editData, [e.target.name]: e.target.value })
+            }
+          />
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  name="password"
-                  value={editData.password}
-                  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-                />
-              </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="password"
+            value={editData.password}
+            onChange={(e) =>
+              setEditData({ ...editData, [e.target.name]: e.target.value })
+            }
+          />
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Contact</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="contact"
-                  value={editData.contact}
-                  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-                />
-              </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Contact</Form.Label>
+          <Form.Control
+            type="text"
+            name="contact"
+            value={editData.contact}
+            onChange={(e) =>
+              setEditData({ ...editData, [e.target.name]: e.target.value })
+            }
+          />
+        </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
-                  type="email"
-                  name="email"
-                  value={editData.email}
-                  onChange={(e) => setEditData({ ...editData, [e.target.name]: e.target.value })}
-                />
-              </Form.Group>
-
-              <div className="d-flex justify-content-end gap-2">
-                <Button variant="secondary" onClick={() => setEditData(null)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={handleUpdate}>
-                  Update HR
-                </Button>
-              </div>
-            </Form>
-          </Card.Body>
-        </Card>
-      )}
+        <Form.Group className="mb-3">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            value={editData.email}
+            onChange={(e) =>
+              setEditData({ ...editData, [e.target.name]: e.target.value })
+            }
+          />
+        </Form.Group>
+      </Form>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setEditData(null)}>
+      Cancel
+    </Button>
+    <Button variant="primary" onClick={handleUpdate}>
+      Update HR
+    </Button>
+  </Modal.Footer>
+</Modal>
 
       {/* HR List Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>HR List</Modal.Title>
+          <Modal.Title className="w-100 text-center">HR List</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {hrs.length > 0 ? (
-            <Table striped bordered hover responsive>
+            <div className="d-flex justify-content-center">
+              <Table striped bordered hover responsive className="text-center w-75">
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>SR No</th>
                   <th>Name</th>
                   <th>Company</th>
                   <th>Email</th>
@@ -339,32 +353,38 @@ const AdminProfile = () => {
                 </tr>
               </thead>
               <tbody>
-                {hrs.map((hr) => (
+                {hrs.map((hr,index) => (
                   <tr key={hr.hr_id}>
-                    <td>{hr.hr_id}</td>
+                    <td>{index + 1}</td>
                     <td>{hr.name}</td>
                     <td>{hr.company_name}</td>
                     <td>{hr.email}</td>
                     <td>{hr.contact}</td>
                     <td>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => setEditData(hr)} // open edit form
-                        className="me-2"
-                      >
-                        Update
-                      </Button>
-                      <Button variant="danger" size="sm" onClick={() => handleDelete(hr.hr_id)}>
-                        Delete
-                      </Button>
-                    </td>
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => setEditData(hr)} // open edit form
+                          >
+                          Update
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(hr.hr_id)}
+                           >
+                          Delete
+                          </Button>
+                        </div>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+            </div>
           ) : (
-            <p className="text-center text-muted">No HRs found</p>
+            <p className="text-center">No HR records found.</p>
           )}
         </Modal.Body>
       </Modal>
