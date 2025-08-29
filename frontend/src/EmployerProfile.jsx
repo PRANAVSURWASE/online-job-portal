@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  getEmployerProfile,
-  getEmployerJobs,
-  deleteJob,
-  createJob,
-  getApplicants,
-  updateJob,   // ✅ import updateJob service
+import { useNavigate ,} from "react-router-dom";
+import { Modal, Button, Form } from "react-bootstrap";
+import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants   updateJob,   // ✅ import updateJob service
 } from "./services/employerService";
+import { scheduleInterview } from "./services/scheduleServices";
+
 
 const EmployerProfile = () => {
   const [employer, setEmployer] = useState(null);
@@ -21,6 +18,20 @@ const EmployerProfile = () => {
     location: "",
     skills: "",
   });
+  const [applicants, setApplicants] = useState([]);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+   const [selectedApplicant, setSelectedApplicant] = useState(null);
+
+     const [scheduleForm, setScheduleForm] = useState({
+      date: "",
+      time: "",
+      mode: "ONLINE",
+      location: "",
+      meetingLink: "",
+      notes: "",
+  });
+
+
 
   const [editingJob, setEditingJob] = useState(null); // ✅ track job being edited
   const navigate = useNavigate();
@@ -53,11 +64,24 @@ const EmployerProfile = () => {
       .finally(() => setLoading(false));
   }, []);
 
+   useEffect(() => {
+    if (activeTab === "applicants") {
+      const token = sessionStorage.getItem("employerToken");
+      if (!token) return;
+
+      setLoading(true);
+      getApplicants(token)
+        .then((res) => setApplicants(res.data.apply_jobs || []))
+        .catch(() => setError("Failed to load applicants."))
+        .finally(() => setLoading(false));
+    }
+  }, [activeTab]);
+
   // Delete Job
   const handleDeleteJob = (j_id) => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-
+    console.log("Token:",token);
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -74,32 +98,52 @@ const EmployerProfile = () => {
     createJob(jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job created successfully");
-        setJobs((prev) => [...prev, res.data.job]);
+        setJobs((prev) => [...prev, res.data.job]); 
         setShowJobForm(false);
         setJobForm({ j_name: "", location: "", skills: "" });
       })
       .catch(() => alert("Failed to create job"));
   };
 
-  // ✅ Update Job
-  const handleUpdateJob = (e) => {
+  const handleSchedule = (applicant) => {
+    console.log("Applicant object:", applicant);
+  setSelectedApplicant(applicant);
+  setShowScheduleModal(true);
+};
+  // Submit Interview Schedule
+  const submitSchedule = async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("employerToken");
-    if (!editingJob) return;
 
-    updateJob(editingJob.j_id, jobForm, token)
-      .then((res) => {
-        alert(res.data.msg || "Job updated successfully");
-        setJobs((prev) =>
-          prev.map((job) =>
-            job.j_id === editingJob.j_id ? { ...job, ...jobForm } : job
-          )
-        );
-        setEditingJob(null);
-        setJobForm({ j_name: "", location: "", skills: "" });
-      })
-      .catch(() => alert("Failed to update job"));
+    if (!selectedApplicant) return alert("No applicant selected");
+
+    try {
+      const res = await scheduleInterview(token, {
+        uid: selectedApplicant.uid,   // applicant ID
+        j_id: selectedApplicant.j_id, // job ID
+        
+        ...scheduleForm,
+      });
+      
+
+      alert(res.data.msg || "Interview scheduled successfully");
+
+      // Reset form + close modal
+      setShowScheduleModal(false);
+      setScheduleForm({
+        date: "",
+        time: "",
+        mode: "ONLINE",
+        location: "",
+        meetingLink: "",
+        notes: "",
+      });
+    } catch (err) {
+      alert(err.response?.data?.msg || "Failed to schedule interview");
+    }
   };
+
+
 
   if (error) return <p className="text-danger text-center mt-5">{error}</p>;
   if (!employer) return <p className="text-center mt-5">Loading profile...</p>;
@@ -107,15 +151,17 @@ const EmployerProfile = () => {
   return (
     <div className="container-fluid" style={{ marginTop: "80px" }}>
       <div className="row">
-        {/* Employer Info */}
+        
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
-          <h3 className="mb-4">Welcome 🏢 {employer.name}</h3>
+          <h3 className="mb-4">Welcome 🤵‍♂️ </h3>
+          <h3><p><strong>{employer.name}</strong></p></h3>
           <ul className="list-unstyled">
             <li><strong>Name:</strong> {employer.name}</li>
             <li><strong>Email:</strong> {employer.email}</li>
             <li><strong>Contact:</strong> {employer.contact}</li>
             <li><strong>Company:</strong> {employer.company_name}</li>
           </ul>
+        
           <button
             className="btn btn-danger w-100"
             onClick={() => {
@@ -127,9 +173,10 @@ const EmployerProfile = () => {
           </button>
         </div>
 
-        {/* Jobs Section */}
+        
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
+           
             <div className="d-flex mb-3">
               <button
                 className={`btn me-2 ${
@@ -141,26 +188,19 @@ const EmployerProfile = () => {
               </button>
               <button
                 className={`btn me-2 ${
-                  activeTab === "interviews"
-                    ? "btn-primary"
-                    : "btn-outline-primary"
+                  activeTab === "interviews" ? "btn-primary" : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("interviews")}
               >
                 Scheduled Interviews
               </button>
               <button
-                className={`btn ${
-                  activeTab === "applicants"
-                    ? "btn-primary"
-                    : "btn-outline-primary"
-                }`}
-                onClick={() => setActiveTab("applicants")}
-              >
-                Applicants
-              </button>
+              className={`btn ${activeTab === "applicants" ? "btn-primary" : "btn-outline-primary"}`}
+              onClick={() => setActiveTab("applicants")}
+               >Applicants</button>
             </div>
 
+           
             {activeTab === "jobs" && (
               <div>
                 {/* ✅ Job Form (Create / Update) */}
@@ -223,14 +263,7 @@ const EmployerProfile = () => {
                   </form>
                 )}
 
-                {!editingJob && !showJobForm && (
-                  <button
-                    className="btn btn-primary mb-3"
-                    onClick={() => setShowJobForm(true)}
-                  >
-                    Create Job
-                  </button>
-                )}
+                
 
                 {loading ? (
                   <p>Loading jobs...</p>
@@ -241,27 +274,24 @@ const EmployerProfile = () => {
                         <h4><strong>Role:</strong> {job.j_name}</h4>
                         <p className="mb-1"><strong>Location:</strong> {job.location}</p>
                         <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
-                        <div className="d-flex mt-2">
-                          <button
-                            className="btn btn-danger btn-sm me-2"
-                            onClick={() => handleDeleteJob(job.j_id)}
-                          >
-                            Delete Job
-                          </button>
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => {
-                              setEditingJob(job);
-                              setJobForm({
-                                j_name: job.j_name,
-                                location: job.location,
-                                skills: job.skills,
-                              });
-                            }}
-                          >
-                            Update
-                          </button>
-                        </div>
+                        <p className="mb-1"><strong>Posted On:</strong>{" "}
+                        {new Date(job.posted_date).toLocaleString("en-US", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                        })}
+                        </p>
+                        <button
+                          className="btn btn-danger btn-sm mt-2 me-2"
+                          onClick={() => handleDeleteJob(job.j_id)}
+                        >
+                          Delete Job
+                        </button>
+                        
+                        <button className="btn btn-primary btn-sm mt-2" >Update</button>
                       </li>
                     ))}
                   </ul>
@@ -271,8 +301,130 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            {activeTab === "interviews" && <p>Coming soon...</p>}
-            {activeTab === "applicants" && <p>Applicants list here...</p>}
+            
+            {activeTab === "interviews" && (
+              <div>
+                <p>Coming soon: Scheduled Interviews list here...</p>
+              </div>
+            )}
+
+            {activeTab === "applicants" && (
+  <div>
+    {loading ? (
+      <p>Loading applicants...</p>
+    ) : applicants.length > 0 ? (
+      <ul className="list-group">
+        {applicants.map((applicant, i) => (
+          <li key={i} className="list-group-item">
+            <p><strong>Name:</strong> <span className="ms-2">{applicant.name}</span></p>
+            <p><strong>Contact:</strong> {applicant.contact}</p>
+            <p><strong>Applied For:</strong> {applicant.j_name}</p>
+            <p>
+              <strong>Applied On:</strong>{" "}
+              {new Date(applicant.apply_date).toLocaleString("en-US", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })}
+            </p>
+            
+             <button
+                className="btn btn-success btn-sm"
+                onClick={() => handleSchedule(applicant)}
+                > Schedule Interview
+              </button>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No applicants found yet.</p>
+    )}
+  </div>
+)}
+  <Modal show={showScheduleModal} onHide={() => setShowScheduleModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      Schedule Interview {selectedApplicant ? `for ${selectedApplicant.name}` : ""}
+    </Modal.Title>
+  </Modal.Header>
+  <Form onSubmit={submitSchedule}>
+    <Modal.Body>
+      <Form.Group className="mb-2">
+        <Form.Label>Date</Form.Label>
+        <Form.Control
+          type="date"
+          value={scheduleForm.date}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-2">
+        <Form.Label>Time</Form.Label>
+        <Form.Control
+          type="time"
+          value={scheduleForm.time}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-2">
+        <Form.Label>Mode</Form.Label>
+        <Form.Select
+          value={scheduleForm.mode}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, mode: e.target.value })}
+          required
+        >
+          <option value="ONLINE">ONLINE</option>
+          <option value="OFFLINE">OFFLINE</option>
+        </Form.Select>
+      </Form.Group>
+
+      <Form.Group className="mb-2">
+        <Form.Label>Location</Form.Label>
+        <Form.Control
+          type="text"
+          value={scheduleForm.location}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-2">
+        <Form.Label>Meeting Link</Form.Label>
+        <Form.Control
+          type="text"
+          value={scheduleForm.meetingLink}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, meetingLink: e.target.value })}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-2">
+        <Form.Label>Notes</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={2}
+          value={scheduleForm.notes}
+          onChange={(e) => setScheduleForm({ ...scheduleForm, notes: e.target.value })}
+        />
+      </Form.Group>
+    </Modal.Body>
+
+    <Modal.Footer>
+      <Button variant="secondary" onClick={() => setShowScheduleModal(false)}>
+        Cancel
+      </Button>
+      <Button type="submit" variant="success">
+        Save
+      </Button>
+    </Modal.Footer>
+  </Form>
+</Modal>
+
+
           </div>
         </div>
       </div>

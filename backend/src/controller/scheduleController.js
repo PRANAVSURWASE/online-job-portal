@@ -1,21 +1,41 @@
 let scheduleModel = require("../models/scheduleModel.js");
 
 exports.scheduleInterview = (req, res) => {
-    let{  uid,j_id,date,time,mode,location,meetingLink,notes } = req.body;
+    let { uid, j_id, date, time, mode, location, meetingLink, notes } = req.body;
 
-    scheduleModel.hasAppliedForJob(uid, j_id) 
-    .then(hasApplied =>{
-        if(!hasApplied) {
-            return res.status(400).json({ msg: "User has not applied for this job" });
-        }
-        return scheduleModel.scheduleInterview(uid, j_id, date, time, mode, location, meetingLink, notes);
-    })
-    .then(result => {
-        res.status(201).json({ msg: "Interview scheduled successfully", data: result });
-    })
-    .catch(err => { 
-        res.status(500).json({ msg: "Internal server error", error: err.message || err });
-    });
+    
+    if (!mode || mode.trim() === "") {
+        mode = "ONLINE";   // default
+    }
+    if (!location || location.trim() === "") {
+        location = mode === "ONLINE" ? "Virtual" : "Office"; // auto adjust
+    }
+    if (!meetingLink && mode === "ONLINE") {
+        meetingLink = "TBD"; // placeholder until HR adds real link
+    }
+    if (!notes) {
+        notes = "No additional notes";
+    }
+
+    
+    if (!uid || !j_id || !date || !time) {
+        return res.status(400).json({ msg: "uid, j_id, date, and time are required" });
+    }
+    console.log("✅ Validated Data:", { uid, j_id, date, time, mode, location, meetingLink, notes });
+
+    scheduleModel.hasAppliedForJob(uid, j_id)
+        .then(hasApplied => {
+            if (!hasApplied) {
+                return res.status(400).json({ msg: "User has not applied for this job" });
+            }
+            return scheduleModel.scheduleInterview(uid, j_id, date, time, mode, location, meetingLink, notes);
+        })
+        .then(result => {
+            res.status(201).json({ msg: "Interview scheduled successfully", data: result });
+        })
+        .catch(err => {
+            res.status(500).json({ msg: "Internal server error", error: err.message || err });
+        });
 };
 
 exports.updateInterviewStatus = (req, res) => {
