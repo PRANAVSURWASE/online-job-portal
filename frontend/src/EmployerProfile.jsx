@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate ,} from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants   updateJob,   // ✅ import updateJob service
+import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants,updateJob,   // ✅ import updateJob service
 } from "./services/employerService";
 import { scheduleInterview } from "./services/scheduleServices";
+
 
 
 const EmployerProfile = () => {
@@ -103,6 +104,24 @@ const EmployerProfile = () => {
         setJobForm({ j_name: "", location: "", skills: "" });
       })
       .catch(() => alert("Failed to create job"));
+  };
+  const handleUpdateJob = (e) => {
+    e.preventDefault();
+    const token = sessionStorage.getItem("employerToken");
+    if (!editingJob) return;
+
+    updateJob(editingJob.j_id, jobForm, token)
+      .then((res) => {
+        alert(res.data.msg || "Job updated successfully");
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.j_id === editingJob.j_id ? { ...job, ...jobForm } : job
+          )
+        );
+        setEditingJob(null);
+        setJobForm({ j_name: "", location: "", skills: "" });
+      })
+      .catch(() => alert("Failed to update job"));
   };
 
   const handleSchedule = (applicant) => {
@@ -262,6 +281,14 @@ const EmployerProfile = () => {
                     </button>
                   </form>
                 )}
+                 {!editingJob && !showJobForm && (
+                  <button
+                    className="btn btn-primary mb-3"
+                    onClick={() => setShowJobForm(true)}
+                  >
+                    Create Job
+                  </button>
+                )}
 
                 
 
@@ -291,7 +318,19 @@ const EmployerProfile = () => {
                           Delete Job
                         </button>
                         
-                        <button className="btn btn-primary btn-sm mt-2" >Update</button>
+                         <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              setEditingJob(job);
+                              setJobForm({
+                                j_name: job.j_name,
+                                location: job.location,
+                                skills: job.skills,
+                              });
+                            }}
+                          >
+                            Update
+                          </button>
                       </li>
                     ))}
                   </ul>
