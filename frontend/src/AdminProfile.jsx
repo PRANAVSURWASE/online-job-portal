@@ -251,10 +251,10 @@ const AdminProfile = () => {
         </Card>
       )}
 
-      {/* Edit HR Form */}
+      
       {editData && (
         <Card className="shadow-lg border-0 mt-4">
-          <Card.Header className="bg-warning text-white text-center fw-bold">Edit HR</Card.Header>
+          <Card.Header className="bg-primary text-white text-center fw-bold">Edit HR</Card.Header>
           <Card.Body>
             <Form>
               <Form.Group className="mb-3">
@@ -311,7 +311,7 @@ const AdminProfile = () => {
                 <Button variant="secondary" onClick={() => setEditData(null)}>
                   Cancel
                 </Button>
-                <Button variant="warning" onClick={handleUpdate}>
+                <Button variant="primary" onClick={handleUpdate}>
                   Update HR
                 </Button>
               </div>
@@ -348,7 +348,7 @@ const AdminProfile = () => {
                     <td>{hr.contact}</td>
                     <td>
                       <Button
-                        variant="warning"
+                        variant="primary"
                         size="sm"
                         onClick={() => setEditData(hr)} // open edit form
                         className="me-2"

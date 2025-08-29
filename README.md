@@ -1,9 +1,9 @@
 # online-job-portal
-A full-stack web application that connects job seekers with employers. Built using Node.js, Express.js, MySQL, and EJS, it supports user registration, job posting, application tracking, and admin-level management.
+A full-stack web application that connects job seekers with employers. Built using Node.js, Express.js, MySQL, and React.js, it supports user registration, job posting, application tracking, and admin-level management.
 
 # 🧑‍💼 Online Job Portal
 
-A full-stack web application that connects job seekers with employers. Built using **Node.js**, **Express.js**, **MySQL**, and **EJS**, it allows users to register, apply for jobs, and track applications, while HRs can post and manage job listings. Admins have access to platform-wide management.
+A full-stack web application that connects job seekers with employers. Built using **Node.js**, **Express.js**, **MySQL**, and **React.js**, it allows users to register, apply for jobs, and track applications, while HRs can post and manage job listings. Admins have access to platform-wide management.
 
 ---
 
@@ -33,7 +33,7 @@ A full-stack web application that connects job seekers with employers. Built usi
 
 | Layer     | Technology                  |
 |-----------|-----------------------------|
-| Frontend  | HTML, CSS, JavaScript, EJS  |
+| Frontend  | HTML, CSS, JavaScript,React  |
 | Backend   | Node.js, Express.js         |
 | Database  | MySQL                       |
 | Styling   | Bootstrap                   |
@@ -50,8 +50,8 @@ online-job-portal/
 │ ├── models/
 │ └── server.js
 ├── frontend/
-│ ├── views/ # EJS templates
-│ └── public/ # Static assets
+│ ├── views/ 
+│ └── public/ 
 ├── database/
 │ └── job_portal.sql
 ├── README.md
