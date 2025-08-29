@@ -33,13 +33,23 @@ export const getEmployerJobs =(token)=>{
   return axios.get("http://localhost:4000/hr/viewJob",{
     headers:{Authorization:`Bearer ${token}`},  
   })
-}
+};
 
 export const deleteJob =(j_id,token)=>{
   return axios.delete(`http://localhost:4000/hr/deleteJob/${j_id}`,{
      headers:{ Authorization:`Bearer ${token}`},
 });
-}
+};
+
+export const updateJob = (j_id, formData, token) => {
+  return axios.put(
+    `http://localhost:4000/hr/updateJobById/${j_id}`,
+    formData,
+    {
+      headers: { Authorization: `Bearer ${token}` }
+    }
+  );
+};
 
 export const getApplicants =(token)=>{
   let promise=axios.get("http://localhost:4000/hr/getApplicants",{

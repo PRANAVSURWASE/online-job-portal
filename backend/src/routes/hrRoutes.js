@@ -10,8 +10,9 @@ router.get("/hrProfile", authenticateToken, isHr, hrCtrl.getHrProfile);
 router.post("/createJob", hrCtrl.createJob);
 router.get("/listjobs", hrCtrl.listjobs);
 router.get("/viewJob", hrCtrl.getJobById);
-router.delete("/deleteJob/:job_id", hrCtrl.deleteJobById)
-router.post("/searchJob/:job_name", hrCtrl.searchJobsByName)
+router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
+router.put('/updateJobById/:j_id', hrCtrl.updateJob);
+router.post("/searchJob/:job_name", hrCtrl.searchJobsByName);
 router.post('/scheduleInterview', scheduleCtrl.scheduleInterview);
 router.post('/completed-interviews',scheduleCtrl.getCompletedInterviews)
 router.put('/updateJob/:j_id', scheduleCtrl.updateInterviewStatus)

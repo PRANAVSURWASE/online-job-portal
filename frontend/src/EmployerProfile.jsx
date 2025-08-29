@@ -6,6 +6,7 @@ import {
   deleteJob,
   createJob,
   getApplicants,
+  updateJob,   // ✅ import updateJob service
 } from "./services/employerService";
 
 const EmployerProfile = () => {
@@ -20,8 +21,8 @@ const EmployerProfile = () => {
     location: "",
     skills: "",
   });
-  const [applicants, setApplicants] = useState([]);
 
+  const [editingJob, setEditingJob] = useState(null); // ✅ track job being edited
   const navigate = useNavigate();
 
   // Fetch Employer Profile
@@ -40,7 +41,7 @@ const EmployerProfile = () => {
       .catch(() => setError("Failed to fetch profile. Please log in again."));
   }, [navigate]);
 
-  // Fetch Employer Jobs (only needs token now)
+  // Fetch Employer Jobs
   useEffect(() => {
     const token = sessionStorage.getItem("employerToken");
     if (!token) return;
@@ -52,25 +53,11 @@ const EmployerProfile = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    if (activeTab === "applicants") {
-      const token = sessionStorage.getItem("employerToken");
-      if (!token) return;
-
-      setLoading(true);
-      getApplicants(token)
-        .then((res) => setApplicants(res.data.apply_jobs || []))
-        .catch(() => setError("Failed to load applicants."))
-        .finally(() => setLoading(false));
-    }
-  }, [activeTab]);
-
   // Delete Job
   const handleDeleteJob = (j_id) => {
-    console.log("Deleting job with ID:", j_id);
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-    console.log("Token:", token);
+
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -79,7 +66,7 @@ const EmployerProfile = () => {
       .catch(() => alert("Failed to delete job"));
   };
 
-  //  Create Job
+  // Create Job
   const handleCreateJob = (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("employerToken");
@@ -94,29 +81,41 @@ const EmployerProfile = () => {
       .catch(() => alert("Failed to create job"));
   };
 
+  // ✅ Update Job
+  const handleUpdateJob = (e) => {
+    e.preventDefault();
+    const token = sessionStorage.getItem("employerToken");
+    if (!editingJob) return;
+
+    updateJob(editingJob.j_id, jobForm, token)
+      .then((res) => {
+        alert(res.data.msg || "Job updated successfully");
+        setJobs((prev) =>
+          prev.map((job) =>
+            job.j_id === editingJob.j_id ? { ...job, ...jobForm } : job
+          )
+        );
+        setEditingJob(null);
+        setJobForm({ j_name: "", location: "", skills: "" });
+      })
+      .catch(() => alert("Failed to update job"));
+  };
+
   if (error) return <p className="text-danger text-center mt-5">{error}</p>;
   if (!employer) return <p className="text-center mt-5">Loading profile...</p>;
 
   return (
     <div className="container-fluid" style={{ marginTop: "80px" }}>
       <div className="row">
+        {/* Employer Info */}
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
           <h3 className="mb-4">Welcome 🏢 {employer.name}</h3>
           <ul className="list-unstyled">
-            <li>
-              <strong>Name:</strong> {employer.name}
-            </li>
-            <li>
-              <strong>Email:</strong> {employer.email}
-            </li>
-            <li>
-              <strong>Contact:</strong> {employer.contact}
-            </li>
-            <li>
-              <strong>Company:</strong> {employer.company_name}
-            </li>
+            <li><strong>Name:</strong> {employer.name}</li>
+            <li><strong>Email:</strong> {employer.email}</li>
+            <li><strong>Contact:</strong> {employer.contact}</li>
+            <li><strong>Company:</strong> {employer.company_name}</li>
           </ul>
-
           <button
             className="btn btn-danger w-100"
             onClick={() => {
@@ -128,6 +127,7 @@ const EmployerProfile = () => {
           </button>
         </div>
 
+        {/* Jobs Section */}
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
             <div className="d-flex mb-3">
@@ -163,15 +163,13 @@ const EmployerProfile = () => {
 
             {activeTab === "jobs" && (
               <div>
-                <button
-                  className="btn btn-primary mb-3"
-                  onClick={() => setShowJobForm(!showJobForm)}
-                >
-                  {showJobForm ? "Cancel" : "Create Job"}
-                </button>
-
-                {showJobForm && (
-                  <form onSubmit={handleCreateJob} className="mb-3">
+                {/* ✅ Job Form (Create / Update) */}
+                {(showJobForm || editingJob) && (
+                  <form
+                    onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
+                    className="mb-3"
+                  >
+                    <h5>{editingJob ? "Update Job" : "Create Job"}</h5>
                     <div className="mb-2">
                       <input
                         type="text"
@@ -208,10 +206,30 @@ const EmployerProfile = () => {
                         required
                       />
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                      Save Job
+                    <button type="submit" className="btn btn-primary me-2">
+                      {editingJob ? "Update Job" : "Save Job"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setEditingJob(null);
+                        setShowJobForm(false);
+                        setJobForm({ j_name: "", location: "", skills: "" });
+                      }}
+                    >
+                      Cancel
                     </button>
                   </form>
+                )}
+
+                {!editingJob && !showJobForm && (
+                  <button
+                    className="btn btn-primary mb-3"
+                    onClick={() => setShowJobForm(true)}
+                  >
+                    Create Job
+                  </button>
                 )}
 
                 {loading ? (
@@ -220,26 +238,9 @@ const EmployerProfile = () => {
                   <ul className="list-group">
                     {jobs.map((job) => (
                       <li key={job.j_id} className="list-group-item">
-                        <h4>
-                          <strong>Role:</strong> {job.j_name}
-                        </h4>
-                        <p className="mb-1">
-                          <strong>Location:</strong> {job.location}
-                        </p>
-                        <p className="mb-1">
-                          <strong>Skills:</strong> {job.skills}
-                        </p>
-                        <p className="mb-1">
-                          <strong>Posted On:</strong>{" "}
-                          {new Date(job.posted_on).toLocaleString("en-US", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
-                        </p>
+                        <h4><strong>Role:</strong> {job.j_name}</h4>
+                        <p className="mb-1"><strong>Location:</strong> {job.location}</p>
+                        <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
                         <div className="d-flex mt-2">
                           <button
                             className="btn btn-danger btn-sm me-2"
@@ -247,8 +248,17 @@ const EmployerProfile = () => {
                           >
                             Delete Job
                           </button>
-
-                          <button className="btn btn-primary btn-sm">
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={() => {
+                              setEditingJob(job);
+                              setJobForm({
+                                j_name: job.j_name,
+                                location: job.location,
+                                skills: job.skills,
+                              });
+                            }}
+                          >
                             Update
                           </button>
                         </div>
@@ -261,60 +271,8 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            {activeTab === "interviews" && (
-              <div>
-                <p>Coming soon: Scheduled Interviews list here...</p>
-              </div>
-            )}
-
-            {activeTab === "applicants" && (
-              <div>
-                {loading ? (
-                  <p>Loading applicants...</p>
-                ) : applicants.length > 0 ? (
-                  <ul className="list-group">
-                    {applicants.map((applicant, i) => (
-                      <li key={i} className="list-group-item">
-                        <p>
-                          <strong>Name:</strong>{" "}
-                          <span className="ms-2">{applicant.name}</span>
-                        </p>
-                        <p>
-                          <strong>Contact:</strong> {applicant.contact}
-                        </p>
-                        <p>
-                          <strong>Applied For:</strong> {applicant.j_name}
-                        </p>
-                        <p>
-                          <strong>Applied On:</strong>{" "}
-                          {new Date(applicant.apply_date).toLocaleString(
-                            "en-US",
-                            {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                            }
-                          )}
-                        </p>
-
-                        <button
-                          className="btn btn-success btn-sm"
-                          onClick={() => handleSchedule(applicant)}
-                        >
-                          {" "}
-                          Schedule Interview
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No applicants found yet.</p>
-                )}
-              </div>
-            )}
+            {activeTab === "interviews" && <p>Coming soon...</p>}
+            {activeTab === "applicants" && <p>Applicants list here...</p>}
           </div>
         </div>
       </div>

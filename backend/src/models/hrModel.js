@@ -70,6 +70,21 @@ exports.deleteJobById=(j_id)=>{
         });
     });
 }
+
+exports.updateJobById = (j_id, jobData) => {
+  return new Promise((resolve, reject) => {
+    const { j_name, skills, location } = jobData;
+    const query = "UPDATE job SET j_name = ?, skills = ?, location = ? WHERE j_id = ?";
+     db.query(query, [j_name, skills, location, j_id], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 exports.searchJobsByName=(j_name)=>{
     return new Promise((resolve, reject) => {
         db.query("SELECT * FROM job WHERE j_name LIKE ?", [`%${j_name}%`], (err, result) => {
