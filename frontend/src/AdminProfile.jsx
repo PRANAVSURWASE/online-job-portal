@@ -323,11 +323,12 @@ const AdminProfile = () => {
       {/* HR List Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>HR List</Modal.Title>
+          <Modal.Title className="w-100 text-center">HR List</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {hrs.length > 0 ? (
-            <Table striped bordered hover responsive>
+            <div className="d-flex justify-content-center">
+              <Table striped bordered hover responsive className="text-center w-75">
               <thead>
                 <tr>
                   <th>SR No</th>
@@ -347,24 +348,30 @@ const AdminProfile = () => {
                     <td>{hr.email}</td>
                     <td>{hr.contact}</td>
                     <td>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => setEditData(hr)} // open edit form
-                        className="me-2"
-                      >
-                        Update
-                      </Button>
-                      <Button variant="danger" size="sm" onClick={() => handleDelete(hr.hr_id)}>
-                        Delete
-                      </Button>
-                    </td>
+                        <div className="d-flex justify-content-center gap-2">
+                          <Button
+                            variant="warning"
+                            size="sm"
+                            onClick={() => setEditData(hr)} // open edit form
+                          >
+                          Update
+                          </Button>
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDelete(hr.hr_id)}
+                           >
+                          Delete
+                          </Button>
+                        </div>
+                      </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+            </div>
           ) : (
-            <p className="text-center text-muted">No HRs found</p>
+            <p className="text-center">No HR records found.</p>
           )}
         </Modal.Body>
       </Modal>
