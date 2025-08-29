@@ -330,7 +330,7 @@ const AdminProfile = () => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>ID</th>
+                  <th>SR No</th>
                   <th>Name</th>
                   <th>Company</th>
                   <th>Email</th>
@@ -339,9 +339,9 @@ const AdminProfile = () => {
                 </tr>
               </thead>
               <tbody>
-                {hrs.map((hr) => (
+                {hrs.map((hr,index) => (
                   <tr key={hr.hr_id}>
-                    <td>{hr.hr_id}</td>
+                    <td>{index + 1}</td>
                     <td>{hr.name}</td>
                     <td>{hr.company_name}</td>
                     <td>{hr.email}</td>
