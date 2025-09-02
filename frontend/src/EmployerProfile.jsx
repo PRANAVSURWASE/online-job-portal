@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
-import { useNavigate ,} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import {  getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants,updateJob,   // ✅ import updateJob service
+import {
+  getEmployerProfile,
+  getEmployerJobs,
+  deleteJob,
+  createJob,
+  getApplicants,
+  updateJob, 
 } from "./services/employerService";
-import { scheduleInterview } from "./services/scheduleServices";
-
-
+import {
+  scheduleInterview,
+  getScheduledInterviews,
+} from "./services/scheduleServices";
 
 const EmployerProfile = () => {
   const [employer, setEmployer] = useState(null);
@@ -14,6 +21,7 @@ const EmployerProfile = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showJobForm, setShowJobForm] = useState(false);
+  const [interviews, setInterviews] = useState([]);
   const [jobForm, setJobForm] = useState({
     j_name: "",
     location: "",
@@ -21,20 +29,18 @@ const EmployerProfile = () => {
   });
   const [applicants, setApplicants] = useState([]);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
-   const [selectedApplicant, setSelectedApplicant] = useState(null);
+  const [selectedApplicant, setSelectedApplicant] = useState(null);
 
-     const [scheduleForm, setScheduleForm] = useState({
-      date: "",
-      time: "",
-      mode: "ONLINE",
-      location: "",
-      meetingLink: "",
-      notes: "",
+  const [scheduleForm, setScheduleForm] = useState({
+    date: "",
+    time: "",
+    mode: "ONLINE",
+    location: "",
+    meetingLink: "",
+    notes: "",
   });
 
-
-
-  const [editingJob, setEditingJob] = useState(null); // ✅ track job being edited
+  const [editingJob, setEditingJob] = useState(null); 
   const navigate = useNavigate();
 
   // Fetch Employer Profile
@@ -65,7 +71,7 @@ const EmployerProfile = () => {
       .finally(() => setLoading(false));
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     if (activeTab === "applicants") {
       const token = sessionStorage.getItem("employerToken");
       if (!token) return;
@@ -82,7 +88,7 @@ const EmployerProfile = () => {
   const handleDeleteJob = (j_id) => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-    console.log("Token:",token);
+    console.log("Token:", token);
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -90,26 +96,40 @@ const EmployerProfile = () => {
       })
       .catch(() => alert("Failed to delete job"));
   };
+  // ⬇️ Inside useEffect for scheduled interviews
+useEffect(() => {
+  if (activeTab === "interviews") {
+    const token = sessionStorage.getItem("employerToken");
+    const employer = JSON.parse(sessionStorage.getItem("employer"));
+
+    if (!token || !employer) return;
+
+    setLoading(true);
+    getScheduledInterviews(token, employer.hr_id)
+      .then((res) => setInterviews(res.data.data || []))
+      .catch(() => setError("Failed to load scheduled interviews."))
+      .finally(() => setLoading(false));
+  }
+}, [activeTab]);
 
   // Create Job
   const handleCreateJob = (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("employerToken");
-
     createJob(jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job created successfully");
-        setJobs((prev) => [...prev, res.data.job]); 
+        setJobs((prev) => [...prev, res.data.job]);
         setShowJobForm(false);
         setJobForm({ j_name: "", location: "", skills: "" });
       })
       .catch(() => alert("Failed to create job"));
   };
+
   const handleUpdateJob = (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("employerToken");
     if (!editingJob) return;
-
     updateJob(editingJob.j_id, jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job updated successfully");
@@ -126,10 +146,10 @@ const EmployerProfile = () => {
 
   const handleSchedule = (applicant) => {
     console.log("Applicant object:", applicant);
-  setSelectedApplicant(applicant);
-  setShowScheduleModal(true);
-};
-  // Submit Interview Schedule
+    setSelectedApplicant(applicant);
+    setShowScheduleModal(true);
+  };
+
   const submitSchedule = async (e) => {
     e.preventDefault();
     const token = sessionStorage.getItem("employerToken");
@@ -138,12 +158,11 @@ const EmployerProfile = () => {
 
     try {
       const res = await scheduleInterview(token, {
-        uid: selectedApplicant.uid,   // applicant ID
+        uid: selectedApplicant.uid, // applicant ID
         j_id: selectedApplicant.j_id, // job ID
-        
+
         ...scheduleForm,
       });
-      
 
       alert(res.data.msg || "Interview scheduled successfully");
 
@@ -162,25 +181,29 @@ const EmployerProfile = () => {
     }
   };
 
-
-
   if (error) return <p className="text-danger text-center mt-5">{error}</p>;
   if (!employer) return <p className="text-center mt-5">Loading profile...</p>;
 
   return (
-    <div className="container-fluid" style={{ marginTop: "80px" }}>
+    <div className="container-fluid" style={{ marginTop: "65px" }}>
       <div className="row">
-        
         <div className="col-md-3 bg-light p-4 shadow-sm rounded">
-          <h3 className="mb-4">Welcome 🤵‍♂️ </h3>
-          <h3><p><strong>{employer.name}</strong></p></h3>
+          <h3 className="mb-4">Welcome 🤵 {employer.name}</h3>
           <ul className="list-unstyled">
-            <li><strong>Name:</strong> {employer.name}</li>
-            <li><strong>Email:</strong> {employer.email}</li>
-            <li><strong>Contact:</strong> {employer.contact}</li>
-            <li><strong>Company:</strong> {employer.company_name}</li>
+            <li>
+              <strong>Name:</strong> {employer.name}
+            </li>
+            <li>
+              <strong>Email:</strong> {employer.email}
+            </li>
+            <li>
+              <strong>Contact:</strong> {employer.contact}
+            </li>
+            <li>
+              <strong>Company:</strong> {employer.company_name}
+            </li>
           </ul>
-        
+
           <button
             className="btn btn-danger w-100"
             onClick={() => {
@@ -192,10 +215,8 @@ const EmployerProfile = () => {
           </button>
         </div>
 
-        
         <div className="col-md-9">
           <div className="p-4 rounded shadow bg-white">
-           
             <div className="d-flex mb-3">
               <button
                 className={`btn me-2 ${
@@ -205,24 +226,41 @@ const EmployerProfile = () => {
               >
                 My Jobs
               </button>
+              {!editingJob && !showJobForm && (
+                  <button
+                    className={`btn me-2 ${
+                  activeTab === "jobs" ? "btn-primary" : "btn-outline-primary"
+                }`}
+                    onClick={() => setShowJobForm(true)}
+                  >
+                    Create Job
+                  </button>
+                )}
               <button
                 className={`btn me-2 ${
-                  activeTab === "interviews" ? "btn-primary" : "btn-outline-primary"
+                  activeTab === "interviews"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
                 }`}
                 onClick={() => setActiveTab("interviews")}
               >
                 Scheduled Interviews
               </button>
               <button
-              className={`btn ${activeTab === "applicants" ? "btn-primary" : "btn-outline-primary"}`}
-              onClick={() => setActiveTab("applicants")}
-               >Applicants</button>
+                className={`btn ${
+                  activeTab === "applicants"
+                    ? "btn-primary"
+                    : "btn-outline-primary"
+                }`}
+                onClick={() => setActiveTab("applicants")}
+              >
+                Applicants
+              </button>
             </div>
 
-           
             {activeTab === "jobs" && (
               <div>
-                {/* ✅ Job Form (Create / Update) */}
+                {/*Job Form (Create / Update) */}
                 {(showJobForm || editingJob) && (
                   <form
                     onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
@@ -281,15 +319,6 @@ const EmployerProfile = () => {
                     </button>
                   </form>
                 )}
-                 {!editingJob && !showJobForm && (
-                  <button
-                    className="btn btn-primary mb-3"
-                    onClick={() => setShowJobForm(true)}
-                  >
-                    Create Job
-                  </button>
-                )}
-
                 
 
                 {loading ? (
@@ -298,18 +327,25 @@ const EmployerProfile = () => {
                   <ul className="list-group">
                     {jobs.map((job) => (
                       <li key={job.j_id} className="list-group-item">
-                        <h4><strong>Role:</strong> {job.j_name}</h4>
-                        <p className="mb-1"><strong>Location:</strong> {job.location}</p>
-                        <p className="mb-1"><strong>Skills:</strong> {job.skills}</p>
-                        <p className="mb-1"><strong>Posted On:</strong>{" "}
-                        {new Date(job.posted_date).toLocaleString("en-US", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                        })}
+                        <h4>
+                          <strong>Role:</strong> {job.j_name}
+                        </h4>
+                        <p className="mb-1">
+                          <strong>Location:</strong> {job.location}
+                        </p>
+                        <p className="mb-1">
+                          <strong>Skills:</strong> {job.skills}
+                        </p>
+                        <p className="mb-1">
+                          <strong>Posted On:</strong>{" "}
+                          {new Date(job.posted_on).toLocaleString("en-US", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: true,
+                          })}
                         </p>
                         <button
                           className="btn btn-danger btn-sm mt-2 me-2"
@@ -317,20 +353,20 @@ const EmployerProfile = () => {
                         >
                           Delete Job
                         </button>
-                        
-                         <button
-                            className="btn btn-primary btn-sm"
-                            onClick={() => {
-                              setEditingJob(job);
-                              setJobForm({
-                                j_name: job.j_name,
-                                location: job.location,
-                                skills: job.skills,
-                              });
-                            }}
-                          >
-                            Update
-                          </button>
+
+                        <button
+                          className="btn btn-primary btn-sm mt-2 me-2"
+                          onClick={() => {
+                            setEditingJob(job);
+                            setJobForm({
+                              j_name: job.j_name,
+                              location: job.location,
+                              skills: job.skills,
+                            });
+                          }}
+                        >
+                          Update
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -340,130 +376,225 @@ const EmployerProfile = () => {
               </div>
             )}
 
-            
             {activeTab === "interviews" && (
               <div>
-                <p>Coming soon: Scheduled Interviews list here...</p>
+                {loading ? (
+                  <p>Loading scheduled interviews...</p>
+                ) : interviews.length > 0 ? (
+                  <ul className="list-group">
+                    {interviews.map((interview, i) => (
+                      <li key={i} className="list-group-item">
+                        <p>
+                          <strong>Candidate:</strong> {interview.candidateName}
+                        </p>
+                        <p>
+                          <strong>Job:</strong> {interview.jobTitle}
+                        </p>
+                        <p>
+                          <strong>Date:</strong>{" "}
+                          {new Date(interview.date).toLocaleDateString()}
+                        </p>
+                        <p>
+                          <strong>Time:</strong> {interview.time}
+                        </p>
+                        <p>
+                          <strong>Mode:</strong> {interview.mode}
+                        </p>
+                        {interview.mode === "ONLINE" && (
+                          <p>
+                            <strong>Meeting Link:</strong>{" "}
+                            <a
+                              href={interview.meetingLink}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {interview.meetingLink}
+                            </a>
+                          </p>
+                        )}
+                        {interview.location && (
+                          <p>
+                            <strong>Location:</strong> {interview.location}
+                          </p>
+                        )}
+                        {interview.notes && (
+                          <p>
+                            <strong>Notes:</strong> {interview.notes}
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No scheduled interviews yet.</p>
+                )}
               </div>
             )}
 
             {activeTab === "applicants" && (
-  <div>
-    {loading ? (
-      <p>Loading applicants...</p>
-    ) : applicants.length > 0 ? (
-      <ul className="list-group">
-        {applicants.map((applicant, i) => (
-          <li key={i} className="list-group-item">
-            <p><strong>Name:</strong> <span className="ms-2">{applicant.name}</span></p>
-            <p><strong>Contact:</strong> {applicant.contact}</p>
-            <p><strong>Applied For:</strong> {applicant.j_name}</p>
-            <p>
-              <strong>Applied On:</strong>{" "}
-              {new Date(applicant.apply_date).toLocaleString("en-US", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              })}
-            </p>
-            
-             <button
-                className="btn btn-success btn-sm"
-                onClick={() => handleSchedule(applicant)}
-                > Schedule Interview
-              </button>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>No applicants found yet.</p>
-    )}
-  </div>
-)}
-  <Modal show={showScheduleModal} onHide={() => setShowScheduleModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>
-      Schedule Interview {selectedApplicant ? `for ${selectedApplicant.name}` : ""}
-    </Modal.Title>
-  </Modal.Header>
-  <Form onSubmit={submitSchedule}>
-    <Modal.Body>
-      <Form.Group className="mb-2">
-        <Form.Label>Date</Form.Label>
-        <Form.Control
-          type="date"
-          value={scheduleForm.date}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, date: e.target.value })}
-          required
-        />
-      </Form.Group>
+              <div>
+                {loading ? (
+                  <p>Loading applicants...</p>
+                ) : applicants.length > 0 ? (
+                  <ul className="list-group">
+                    {applicants.map((applicant, i) => (
+                      <li key={i} className="list-group-item">
+                        <p>
+                          <strong>Name:</strong>{" "}
+                          <span className="ms-2">{applicant.name}</span>
+                        </p>
+                        <p>
+                          <strong>Contact:</strong> {applicant.contact}
+                        </p>
+                        <p>
+                          <strong>Applied For:</strong> {applicant.j_name}
+                        </p>
+                        <p>
+                          <strong>Applied On:</strong>{" "}
+                          {new Date(applicant.apply_date).toLocaleString(
+                            "en-US",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            }
+                          )}
+                        </p>
 
-      <Form.Group className="mb-2">
-        <Form.Label>Time</Form.Label>
-        <Form.Control
-          type="time"
-          value={scheduleForm.time}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, time: e.target.value })}
-          required
-        />
-      </Form.Group>
+                        <button
+                          className="btn btn-success btn-sm"
+                          onClick={() => handleSchedule(applicant)}
+                        >
+                          {" "}
+                          Schedule Interview
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No applicants found yet.</p>
+                )}
+              </div>
+            )}
+            <Modal
+              show={showScheduleModal}
+              onHide={() => setShowScheduleModal(false)}
+            >
+              <Modal.Header closeButton>
+                <Modal.Title>
+                  Schedule Interview{" "}
+                  {selectedApplicant ? `for ${selectedApplicant.name}` : ""}
+                </Modal.Title>
+              </Modal.Header>
+              <Form onSubmit={submitSchedule}>
+                <Modal.Body>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={scheduleForm.date}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          date: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
 
-      <Form.Group className="mb-2">
-        <Form.Label>Mode</Form.Label>
-        <Form.Select
-          value={scheduleForm.mode}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, mode: e.target.value })}
-          required
-        >
-          <option value="ONLINE">ONLINE</option>
-          <option value="OFFLINE">OFFLINE</option>
-        </Form.Select>
-      </Form.Group>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Time</Form.Label>
+                    <Form.Control
+                      type="time"
+                      value={scheduleForm.time}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          time: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </Form.Group>
 
-      <Form.Group className="mb-2">
-        <Form.Label>Location</Form.Label>
-        <Form.Control
-          type="text"
-          value={scheduleForm.location}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
-        />
-      </Form.Group>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Mode</Form.Label>
+                    <Form.Select
+                      value={scheduleForm.mode}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          mode: e.target.value,
+                        })
+                      }
+                      required
+                    >
+                      <option value="ONLINE">ONLINE</option>
+                      <option value="OFFLINE">OFFLINE</option>
+                    </Form.Select>
+                  </Form.Group>
 
-      <Form.Group className="mb-2">
-        <Form.Label>Meeting Link</Form.Label>
-        <Form.Control
-          type="text"
-          value={scheduleForm.meetingLink}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, meetingLink: e.target.value })}
-        />
-      </Form.Group>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Location</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={scheduleForm.location}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          location: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
 
-      <Form.Group className="mb-2">
-        <Form.Label>Notes</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={2}
-          value={scheduleForm.notes}
-          onChange={(e) => setScheduleForm({ ...scheduleForm, notes: e.target.value })}
-        />
-      </Form.Group>
-    </Modal.Body>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Meeting Link</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={scheduleForm.meetingLink}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          meetingLink: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
 
-    <Modal.Footer>
-      <Button variant="secondary" onClick={() => setShowScheduleModal(false)}>
-        Cancel
-      </Button>
-      <Button type="submit" variant="success">
-        Save
-      </Button>
-    </Modal.Footer>
-  </Form>
-</Modal>
+                  <Form.Group className="mb-2">
+                    <Form.Label>Notes</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      value={scheduleForm.notes}
+                      onChange={(e) =>
+                        setScheduleForm({
+                          ...scheduleForm,
+                          notes: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                </Modal.Body>
 
-
+                <Modal.Footer>
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowScheduleModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="success">
+                    Save
+                  </Button>
+                </Modal.Footer>
+              </Form>
+            </Modal>
           </div>
         </div>
       </div>

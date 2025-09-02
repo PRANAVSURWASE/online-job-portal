@@ -13,18 +13,46 @@ exports.hasAppliedForJob = (uid, j_id) => {
     });
 }
 
-exports.scheduleInterview = ( uid,j_id,date,time,mode,location,meetingLink,notes) => {
+exports.scheduleInterview = (uid, j_id, date, time, mode, location, meetingLink, notes, hr_id) => {
+    console.log(hr_id);
+    
     return new Promise((resolve, reject) => {
-        db.query("insert  into schedules (uid, j_id, date, time, mode, location, meetingLink, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", 
-        [uid, j_id, date, time, mode, location, meetingLink, notes], (err, result) => {
-            if (err) {
+        const status = "SCHEDULED";
+        db.query(
+            `INSERT INTO schedules 
+             (uid, hr_id, j_id, date, time, mode, location, meetingLink, notes, status, created_at) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
+            [uid, hr_id, j_id, date, time, mode, location, meetingLink, notes, status],
+            (err, result) => {
+                if (err) reject(err);
+                else resolve(result);
+            }
+        );
+    });
+};
+
+exports.getScheduledInterviewsByHr = (hr_id) => {
+    return new Promise((resolve, reject) => {
+        db.query(`
+            SELECT 
+                s.*, 
+                u.name AS candidateName, 
+                j.j_name AS jobTitle,
+                hr.name AS hrName
+            FROM schedules s
+            JOIN user u ON s.uid = u.uid
+            JOIN job j ON s.j_id = j.j_id
+            JOIN hr hr ON s.hr_id = hr.hr_id
+            WHERE s.hr_id = ? AND s.status = 'SCHEDULED';
+        `, [hr_id], (err, result) => {
+            if (err) {  
                 reject(err);
             } else {
                 resolve(result);
             }
         });
     });
-}
+};
 
 exports.updateInterviewStatus = (id, status) => {
     return new Promise((resolve, reject) => {

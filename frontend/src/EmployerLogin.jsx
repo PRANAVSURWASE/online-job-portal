@@ -1,14 +1,13 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loginEmployee } from './services/employerService';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginEmployee } from "./services/employerService";
 
 const EmployerLogin = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role:"hr"
+    role: "hr",
   });
 
   const handleChange = (e) => {
@@ -18,26 +17,53 @@ const EmployerLogin = () => {
     });
   };
 
+  const [msg, setMsg] = useState("");
+  const [alertType, setAlertType] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     loginEmployee(formData)
       .then((res) => {
-        alert(res.data.message || "Login successful!");
+        setMsg(res.data.message || "Login successful!");
+        setAlertType("success"); // green alert
+
         sessionStorage.setItem("employerToken", res.data.token);
         sessionStorage.setItem("employerData", JSON.stringify(res.data.hr));
-        navigate("/employer-profile");
-        setFormData({ email: '', password: '',role:"hr" });
+
+        // clear form fields
+        setFormData({ email: "", password: "", role: "hr" });
+
+        // wait 2s to show message, then redirect
+        setTimeout(() => {
+          setMsg("");
+          navigate("/employer-profile");
+        }, 1000);
       })
       .catch((error) => {
-        alert("Error: " + (error.response?.data?.message || error.message));
+        setMsg(error.response?.data?.message || "Login failed!");
+        setAlertType("danger");
+        setTimeout(() => setMsg(""), 2000);
       });
   };
 
   return (
-    <div className="container py-5" style={{ marginTop: "80px", width: "800px" }}>
+    <div
+      className="container py-5"
+      style={{ marginTop: "80px", width: "800px" }}
+    >
       <h2 className="mb-4">Employer Login</h2>
-      <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit} >
+      {msg && (
+        <div
+          className={`alert alert-${alertType} text-center py-2`}
+          role="alert"
+          style={{ fontSize: "14px", padding: "6px 10px" }}
+        >
+          {msg}
+        </div>
+      )}
+
+      <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input
@@ -66,12 +92,14 @@ const EmployerLogin = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary m-3" >Login</button>
+        <button type="submit" className="btn btn-primary m-3">
+          Login
+        </button>
 
         <button
           type="button"
           className="btn btn-primary ms-3"
-          onClick={() => navigate('/employer-register')}
+          onClick={() => navigate("/employer-register")}
         >
           Register
         </button>

@@ -7,10 +7,9 @@ const AuthPage = () => {
   const [role, setRole] = useState("user"); // default role
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,50 +19,32 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     try {
       let loginUrl = "";
-      if(role==="admin")
-      {
-        loginUrl="http://localhost:4000/auth/adminLogin"
-      }
-      else if(role==="hr")
-      {
-        loginUrl="http://localhost:4000/auth/hrLogin"
-      }
-      else if(role==="user")
-      {
-        loginUrl="http://localhost:4000/auth/login"
+      if (role === "admin") {
+        loginUrl = "http://localhost:4000/auth/adminLogin";
+      } else if (role === "hr") {
+        loginUrl = "http://localhost:4000/auth/hrLogin";
+      } else if (role === "user") {
+        loginUrl = "http://localhost:4000/auth/login";
       }
       const response = await axios.post(loginUrl, {
         email: formData.email,
         password: formData.password,
-        
-        
       });
 
       const { token, user } = response.data;
 
-      // Save token and user info in sessionStorage based on role
-      if (role === "user") 
-        {
+      if (role === "user") {
         sessionStorage.setItem("jobSeekerToken", token);
-      } 
-      else if (role === "hr") 
-      {
-      sessionStorage.setItem("employerToken", token);
-      }
-      else if (role === "admin") 
-      {
-      sessionStorage.setItem("adminToken", token);
+      } else if (role === "hr") {
+        sessionStorage.setItem("employerToken", token);
+      } else if (role === "admin") {
+        sessionStorage.setItem("adminToken", token);
       }
 
-sessionStorage.setItem("user", JSON.stringify(user)); // store user info for all roles
-
-
-      
+      sessionStorage.setItem("user", JSON.stringify(user)); // store user info for all roles
       sessionStorage.setItem("user", JSON.stringify(user));
-
 
       // Redirect based on role
       if (role === "admin") {
@@ -83,10 +64,12 @@ sessionStorage.setItem("user", JSON.stringify(user)); // store user info for all
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+    <Container
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: "100vh" }}
+    >
       <Card className="p-4 shadow-lg" style={{ width: "400px" }}>
         <h3 className="text-center mb-3">Sign In</h3>
-
         {error && <p className="text-danger text-center">{error}</p>}
 
         {/* Role selector */}

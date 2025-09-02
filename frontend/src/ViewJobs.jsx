@@ -37,32 +37,22 @@ const ViewJobs = () => {
       style={{ backgroundColor: "#fff" }}
     >
       <div className="d-flex justify-content-between align-items-center">
-        
         <div>
-         
-          <h5 className="text-primary">{job.company_name}</h5>
-
-          
-          <h4 className="fw-bold mb-2">{job.j_name}</h4>
-
-         
+         <h5 className="text-primary">{job.company_name}</h5>
+         <h4 className="fw-bold mb-2">{job.j_name}</h4>
           <p className="mb-2">
             📍 <strong>Location:</strong> {job.location}
           </p>
-
-        
-          <div className="mb-2">
+        <div className="mb-2">
             <strong>Skills:</strong>
             <br />
-            {job.skills.split(",").map((skill, i) => (
+            {job.skills.split(",").map((skills, i) => (
               <Badge bg="secondary" className="me-2 mt-2" key={i}>
-                {skill.trim()}
+                {skills.trim()}
               </Badge>
             ))}
           </div>
         </div>
-
-        
         <div>
           <button className="btn btn-primary px-4 py-2" onClick={() => navigate('/jobseeker-login')}>Apply Now</button>
         </div>
@@ -70,8 +60,7 @@ const ViewJobs = () => {
     </div>
   ))}
 </div>
-
-  );
+);
 };
 
 export default ViewJobs;

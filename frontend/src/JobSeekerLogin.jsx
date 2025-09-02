@@ -1,81 +1,106 @@
-
-import  { useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginJobSeeker } from "./services/jobseekerService";
 
 const JobSeekerLogin = () => {
   const navigate = useNavigate();
-  const[error,setError]=useState("");
-  const [success,setSucces]=useState("");
+  const [msg, setMsg] = useState("");
+  const [alertType, setAlertType] = useState("success");
 
-  const[formData,setFormData]=useState({
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role:"user"
-    
+    role: "user",
   });
 
   const handleChange = (e) => {
     setFormData({
-      ...formData,[e.target.name]:e.target.value,
+      ...formData,
+      [e.target.name]: e.target.value,
     });
   };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-      loginJobSeeker(formData)
-        .then((res) => {
+    loginJobSeeker(formData)
+      .then((res) => {
+        setAlertType("success");
+        setMsg(res.data.msg || "Login successful!");
+        sessionStorage.setItem("jobSeekerToken", res.data.token);
+        sessionStorage.setItem("jobSeekerData", JSON.stringify(res.data.user));
 
-          console.log("Backend Response:", res.data);
-          setError("");
-         setSucces(res.data.msg || "Login successful!");
-          
+        // clear form
+        setFormData({ email: "", password: "", role: "user" });
 
-          sessionStorage.setItem("jobSeekerToken", res.data.token);
-          
-          sessionStorage.setItem("jobSeekerData",JSON.stringify(res.data.user));
-          console.log(res.data);
+        // redirect after 2s
+        setTimeout(() => {
+          setMsg("");
           navigate("/jobseeker-profile");
+        }, 500);
+      })
+      .catch((error) => {
+        setAlertType("danger");
+        setMsg(
+          error.response?.data?.msg || "Something went wrong. Please try again."
+        );
 
-          setFormData({ email: '', password: '', role: 'user' }); // Reset form data
-        })
-        .catch((error) => {
-        console.error("Login error:", error);
-
-        if (error.response && error.response.data && error.response.data.msg) {
-          setError(error.response.data.msg); // set backend error message
-        } else {
-          setError("Something went wrong. Please try again.");
-        }
+        setTimeout(() => setMsg(""), 2000);
       });
-    };
-    
-      
-
-
+  };
 
   return (
-    <div className="container py-5" style={{ marginTop: "80px" , width: "800px" }}>
-        <h2 className="mb-4"> Job Seeker Login</h2>
-        {error && <p className="text-danger text-center">{error}</p>}
-        {success && <p className="text-success text-center">{success}</p>}
-        <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit} >
-            <div className="mb-3">
-                <label className="form">Email</label>
-                <input type="email" className="form-control" name="email" value={formData.email} style={{width:"500px ",border:"1px solid black"}} placeholder="Enter Email" onChange={handleChange} /> 
-            </div>
+    <div
+      className="container py-5"
+      style={{ marginTop: "80px", width: "800px" }}
+    >
+      <h2 className="mb-4">Job Seeker Login</h2>
+      {msg && (
+        <div className={`alert alert-${alertType} text-center`} role="alert">
+          {msg}
+        </div>
+      )}
 
-            <div className="mb-3">
-                <label className="form" >Password</label>
-                <input type="password" className='form-control' name="password" value={formData.password} style={{width:"500px ",border:"1px solid black"}} placeholder="Enter Password" onChange={handleChange} />
-            </div>
-            
-            <button  type="button" className="btn btn-primary m-3" onClick={handleSubmit} >Login</button>
-            <button  type="button" className="btn btn-primary" onClick={()=>navigate('/jobseeker-register')}>Register as Job Seeker</button>
+      <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Email</label>
+          <input
+            type="email"
+            className="form-control"
+            name="email"
+            value={formData.email}
+            style={{ width: "500px", border: "1px solid black" }}
+            placeholder="Enter Email"
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-        </form>
-     
+        <div className="mb-3">
+          <label className="form-label">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            value={formData.password}
+            style={{ width: "500px", border: "1px solid black" }}
+            placeholder="Enter Password"
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary m-3">
+          Login
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={() => navigate("/jobseeker-register")}
+        >
+          Register as Job Seeker
+        </button>
+      </form>
     </div>
   );
 };

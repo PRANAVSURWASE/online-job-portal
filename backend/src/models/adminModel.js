@@ -102,9 +102,7 @@ exports.addHR=(name, company_name, password, contact, email)=>{
 }
 
 exports.findAdminByName = (email) => {
-  console.log("Finding Admin by email:",email);
-  
-  return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
     db.query("SELECT * FROM admin WHERE email = ?", [email], (err, results) => {
       if (err) return reject(err);
       resolve(results);

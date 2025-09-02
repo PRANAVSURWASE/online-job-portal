@@ -36,7 +36,7 @@ const ContactForm = () => {
   };
 
   return (
-    <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit}>
+    <form className="p-3 rounded shadow bg-white" onSubmit={handleSubmit}>
       <div className="mb-3">
         <label className="form-label">Name</label>
         <input
@@ -81,7 +81,7 @@ const ContactForm = () => {
         <textarea
           name="message"
           className="form-control"
-          rows={5}
+          rows={4}
           placeholder="Type your message"
           value={formData.message}
           onChange={handleChange}

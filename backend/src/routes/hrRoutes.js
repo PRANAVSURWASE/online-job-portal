@@ -12,13 +12,15 @@ router.get("/listjobs", hrCtrl.listjobs);
 router.get("/viewJob", hrCtrl.getJobById);
 router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
 router.put('/updateJobById/:j_id', hrCtrl.updateJob);
+router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
 router.post("/searchJob/:job_name", hrCtrl.searchJobsByName);
-router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById)
-router.post("/searchJob/:job_name", hrCtrl.searchJobsByName)
-router.post('/scheduleInterview', scheduleCtrl.scheduleInterview);
-router.post('/completed-interviews',scheduleCtrl.getCompletedInterviews)
-router.put('/updateJob/:j_id', scheduleCtrl.updateInterviewStatus)
+router.post("/searchJob/:job_name", hrCtrl.searchJobsByName);
 router.get("/getApplicants",hrCtrl.getJobsAppliedByUser);
+router.post('/scheduleInterview', scheduleCtrl.scheduleInterview);
+router.get('/getScheduledInterviews', scheduleCtrl.getScheduledInterviews);
+router.post('/completed-interviews',scheduleCtrl.getCompletedInterviews);
+router.put('/updateJob/:j_id', scheduleCtrl.updateInterviewStatus);
+
 
 
 module.exports=router;

@@ -35,7 +35,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="hero-gradient text-white py-5" style={{ marginTop: '76px', minHeight: '90vh' }}>
+    <section className="hero-gradient text-white py-5" style={{ marginTop: '58px', minHeight: '90vh' }}>
       <Container className="h-100">
         <Row className="align-items-center h-100 py-5">
           <Col lg={6} className="mb-5 mb-lg-0">
