@@ -41,24 +41,42 @@ exports.scheduleInterview = (req, res) => {
         });
 };
 
+
+
 exports.getScheduledInterviews = (req, res) => {
-    let hr_id = req.query.hr_id || req.body.hr_id; // depending on how you send it
-    if (!hr_id) {
-        return res.status(400).json({ msg: "HR ID is required" });
-    }   
-    scheduleModel.getScheduledInterviewsByHr(hr_id)
-    .then(result => {
-        if (result.length > 0) {    
-            res.status(200).json({ msg: "Scheduled interviews fetched successfully", data: result });
+    try {
+        
+        const token = req.headers["authorization"]?.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ msg: "No token provided" });
         }
-        else {
-            res.status(404).json({ msg: "No scheduled interviews found" });
+
+        
+        const decoded = jwt.decode(token, process.env.JWT_SECRET);
+        if (!decoded || !decoded.id) {
+            return res.status(403).json({ msg: "Invalid token" });
         }
-    })
-    .catch(err => {
-        res.status(500).json({ msg: "Internal server error", error: err.message || err });
-    }); 
+
+        const hr_id = decoded.id; // using decoded.id as HR ID
+
+       
+        scheduleModel.getScheduledInterviewsByHr(hr_id)
+            .then(result => {
+                if (result.length > 0) {
+                    res.status(200).json({ msg: "Scheduled interviews fetched successfully", data: result });
+                } else {
+                    res.status(404).json({ msg: "No scheduled interviews found" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({ msg: "Internal server error", error: err.message || err });
+            });
+
+    } catch (err) {
+        res.status(500).json({ msg: "Token verification failed", error: err.message });
+    }
 };
+
 
 exports.updateInterviewStatus = (req, res) => {
     let { id, status } = req.body;  

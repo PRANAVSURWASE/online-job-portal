@@ -45,14 +45,12 @@ exports.getScheduledInterviewsByHr = (hr_id) => {
             JOIN hr hr ON s.hr_id = hr.hr_id
             WHERE s.hr_id = ? AND s.status = 'SCHEDULED';
         `, [hr_id], (err, result) => {
-            if (err) {  
-                reject(err);
-            } else {
-                resolve(result);
-            }
+            if (err) reject(err);
+            else resolve(result);
         });
     });
 };
+
 
 exports.updateInterviewStatus = (id, status) => {
     return new Promise((resolve, reject) => {
