@@ -37,7 +37,7 @@ exports.hrRegister = (req, res) => {
 };
 
 exports.getHrProfile = (req, res) => {
-  console.log("Token is ",token);
+  
   try {
     const hr = {
       id: req.user.id,
