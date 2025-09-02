@@ -119,7 +119,7 @@ useEffect(() => {
     createJob(jobForm, token)
       .then((res) => {
         alert(res.data.msg || "Job created successfully");
-        setJobs((prev) => [...prev, res.data.job]);
+        setJobs((prev) => [ res.data.job,...prev]);
         setShowJobForm(false);
         setJobForm({ j_name: "", location: "", skills: "" });
       })
@@ -338,13 +338,11 @@ useEffect(() => {
                         </p>
                         <p className="mb-1">
                           <strong>Posted On:</strong>{" "}
-                          {new Date(job.posted_on).toLocaleString("en-US", {
+                          {new Date(job.posted_date).toLocaleString("en-US", {
                             day: "2-digit",
                             month: "short",
                             year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
+                            
                           })}
                         </p>
                         <button

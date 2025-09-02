@@ -58,22 +58,28 @@ exports.getHrProfile = (req, res) => {
  */
 exports.createJob = (req, res) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).json({ msg: "Token missing" });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const hr_id = decoded.id; // Extract HR ID from the token
+    const hr_id = decoded.id; // Extract HR ID from token
+
     const { j_name, skills, location } = req.body;
     if (!j_name || !location || !skills) {
       return res.status(400).json({ msg: "All fields are required" });
     }
-    let promise = hrModel.createJob(hr_id, j_name, skills, location);
+
+    // format date as YYYY-MM-DD
+    const posted_date = new Date().toISOString().slice(0, 10);
+
+    let promise = hrModel.createJob(hr_id, j_name, skills, location, posted_date);
     promise
       .then((result) => {
         res.status(201).json({
           msg: "Job created successfully",
-          job: { j_id: result.insertId, hr_id, j_name, skills, location },
+          job: { j_id: result.insertId, hr_id, j_name, skills, location, posted_date: new Date().toISOString().slice(0, 10) },
         });
       })
       .catch((err) => {

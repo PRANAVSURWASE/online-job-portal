@@ -19,19 +19,22 @@ exports.hrRegister=(name,company_name,password,contact,email,role)=>{
     });
 }
 
-exports.createJob=(hr_id, j_name,skills,location)=>{
-    return new Promise((resolve, reject) => {
-        db.query("INSERT INTO job (hr_id, j_name, skills,location ) VALUES (?, ?, ?,?)", 
-        [hr_id, j_name,skills,location], (err, result) => {
-            console.log(err, result);
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
-    });
-}
+exports.createJob = (hr_id, j_name, skills, location) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "INSERT INTO job (hr_id, j_name, skills, location, posted_date) VALUES (?, ?, ?, ?, NOW())",
+      [hr_id, j_name, skills, location],
+      (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      }
+    );
+  });
+};
+
 exports.listjobs=()=>{
     return new Promise((resolve, reject) => {
         db.query("select * from job", (err, result) => {
@@ -46,7 +49,7 @@ exports.listjobs=()=>{
 }
 exports.getJobById=(hr_id)=>{
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM job WHERE hr_id = ?", [hr_id], (err, result) => {
+        db.query("SELECT * FROM job WHERE hr_id = ? order by posted_date DESC", [hr_id], (err, result) => {
             console.log(err, result);
             if (err) {
                 reject(err);
