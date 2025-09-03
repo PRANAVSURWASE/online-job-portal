@@ -59,7 +59,7 @@ export const getApplicants =(token)=>{
 };
 
 export const getScheduledInterviews = (token) => {
-  return axios.get("http://localhost:4000/hr/getScheduledInterviews", {
+  return axios.get("http://localhost:4000/schedules/getScheduledInterviews", {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

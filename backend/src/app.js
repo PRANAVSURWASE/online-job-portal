@@ -16,6 +16,8 @@ let hrRoutes = require('./routes/hrRoutes');
 let jobRoutes = require('./routes/jobRoutes');
 let contactRoutes = require('./routes/contactRoutes');
 let authRoutes = require('./routes/authRoutes');
+let scheduleRoutes = require("./routes/scheduleRoutes");
+
 
 
 app.use(express.static('public'));
@@ -26,6 +28,7 @@ app.use('/admin', adminRoutes);
 app.use('/hr', hrRoutes);
 app.use("/jobs", jobRoutes);
 app.use('/contact', contactRoutes);
+app.use('/schedules',scheduleRoutes)
 
 
 
