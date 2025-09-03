@@ -52,7 +52,7 @@ exports.getScheduledInterviews = (req, res) => {
         }
 
         
-        const decoded = jwt.decode(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded || !decoded.id) {
             return res.status(403).json({ msg: "Invalid token" });
         }

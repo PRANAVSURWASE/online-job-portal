@@ -1,18 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Modal, Button, Form } from "react-bootstrap";
-import {
-  getEmployerProfile,
-  getEmployerJobs,
-  deleteJob,
-  createJob,
-  getApplicants,
-  updateJob, 
-} from "./services/employerService";
-import {
-  scheduleInterview,
-  getScheduledInterviews,
-} from "./services/scheduleServices";
+import {getEmployerProfile,getEmployerJobs,deleteJob,createJob,getApplicants,updateJob,getScheduledInterviews } from "./services/employerService";
+//import {scheduleInterview,getScheduledInterviews,} from "./services/scheduleServices";
 
 const EmployerProfile = () => {
   const [employer, setEmployer] = useState(null);
@@ -96,21 +86,20 @@ const EmployerProfile = () => {
       })
       .catch(() => alert("Failed to delete job"));
   };
-  // ⬇️ Inside useEffect for scheduled interviews
-useEffect(() => {
-  if (activeTab === "interviews") {
-    const token = sessionStorage.getItem("employerToken");
-    const employer = JSON.parse(sessionStorage.getItem("employer"));
+ 
+const handleInterviewsClick = () => {
+  setActiveTab("interviews");
 
-    if (!token || !employer) return;
+  const token = sessionStorage.getItem("employerToken");
+  if (!token) return;
 
-    setLoading(true);
-    getScheduledInterviews(token, employer.hr_id)
-      .then((res) => setInterviews(res.data.data || []))
-      .catch(() => setError("Failed to load scheduled interviews."))
-      .finally(() => setLoading(false));
-  }
-}, [activeTab]);
+  setLoading(true);
+  getScheduledInterviews(token)
+    .then((res) => setInterviews(res.data.data || []))
+    .catch(() => setError("Failed to load scheduled interviews."))
+    .finally(() => setLoading(false));
+};
+
 
   // Create Job
   const handleCreateJob = (e) => {
@@ -164,7 +153,11 @@ useEffect(() => {
         ...scheduleForm,
       });
 
-      alert(res.data.msg || "Interview scheduled successfully");
+      alert(res.data.msg || "Interview scheduled successfully"); 
+
+       getScheduledInterviews(token)
+      .then((res) => setInterviews(res.data.data || []))
+      .catch(() => setError("Failed to load scheduled interviews."));
 
       // Reset form + close modal
       setShowScheduleModal(false);
@@ -236,16 +229,17 @@ useEffect(() => {
                     Create Job
                   </button>
                 )}
-              <button
-                className={`btn me-2 ${
-                  activeTab === "interviews"
-                    ? "btn-primary"
-                    : "btn-outline-primary"
-                }`}
-                onClick={() => setActiveTab("interviews")}
-              >
-                Scheduled Interviews
-              </button>
+           <button
+  className={`btn me-2 ${
+    activeTab === "interviews"
+      ? "btn-primary"
+      : "btn-outline-primary"
+  }`}
+  onClick={handleInterviewsClick}
+>
+  Scheduled Interviews
+</button>
+
               <button
                 className={`btn ${
                   activeTab === "applicants"
@@ -375,59 +369,63 @@ useEffect(() => {
             )}
 
             {activeTab === "interviews" && (
-              <div>
-                {loading ? (
-                  <p>Loading scheduled interviews...</p>
-                ) : interviews.length > 0 ? (
-                  <ul className="list-group">
-                    {interviews.map((interview, i) => (
-                      <li key={i} className="list-group-item">
-                        <p>
-                          <strong>Candidate:</strong> {interview.candidateName}
-                        </p>
-                        <p>
-                          <strong>Job:</strong> {interview.jobTitle}
-                        </p>
-                        <p>
-                          <strong>Date:</strong>{" "}
-                          {new Date(interview.date).toLocaleDateString()}
-                        </p>
-                        <p>
-                          <strong>Time:</strong> {interview.time}
-                        </p>
-                        <p>
-                          <strong>Mode:</strong> {interview.mode}
-                        </p>
-                        {interview.mode === "ONLINE" && (
-                          <p>
-                            <strong>Meeting Link:</strong>{" "}
-                            <a
-                              href={interview.meetingLink}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {interview.meetingLink}
-                            </a>
-                          </p>
-                        )}
-                        {interview.location && (
-                          <p>
-                            <strong>Location:</strong> {interview.location}
-                          </p>
-                        )}
-                        {interview.notes && (
-                          <p>
-                            <strong>Notes:</strong> {interview.notes}
-                          </p>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No scheduled interviews yet.</p>
+  <div>
+    {loading ? (
+      <p>Loading scheduled interviews...</p>
+    ) : interviews.length > 0 ? (
+      <div className="row">
+        {interviews.map((interview, i) => (
+          <div key={i} className="col-md-6 mb-3">
+            <div className="card shadow-sm">
+              <div className="card-body">
+                <h5 className="card-title">{interview.jobTitle}</h5>
+                <h6 className="card-subtitle mb-2 text-muted">
+                  Candidate: {interview.candidateName}
+                </h6>
+                <p className="card-text">
+                  <strong>Date:</strong>{" "}
+                  {new Date(interview.date).toLocaleDateString()}
+                  <br />
+                  <strong>Time:</strong> {interview.time}
+                  <br />
+                  <strong>Mode:</strong> {interview.mode}
+                </p>
+
+                {interview.mode === "ONLINE" && interview.meetingLink && (
+                  <p className="card-text">
+                    <strong>Meeting Link: </strong>
+                    <a
+                      href={interview.meetingLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-primary"
+                    >
+                      {interview.meetingLink}
+                    </a>
+                  </p>
+                )}
+
+                {interview.location && (
+                  <p className="card-text">
+                    <strong>Location:</strong> {interview.location}
+                  </p>
+                )}
+
+                {interview.notes && (
+                  <p className="card-text">
+                    <strong>Notes:</strong> {interview.notes}
+                  </p>
                 )}
               </div>
-            )}
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No scheduled interviews yet.</p>
+    )}
+  </div>
+)}
 
             {activeTab === "applicants" && (
               <div>

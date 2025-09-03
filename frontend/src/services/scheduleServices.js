@@ -7,9 +7,11 @@ export const scheduleInterview = (token, data) => {
      },
   });
 };
+
+/*
 export const getScheduledInterviews = (token, hr_id) => {
   return axios.get("/api/getScheduledInterviews", {
     headers: { Authorization: `Bearer ${token}` },
     params: { hr_id }  
   });
-};
+};*/

@@ -57,3 +57,9 @@ export const getApplicants =(token)=>{
   })
   return promise;
 };
+
+export const getScheduledInterviews = (token) => {
+  return axios.get("http://localhost:4000/hr/getScheduledInterviews", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
