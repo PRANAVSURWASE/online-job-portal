@@ -63,3 +63,13 @@ export const getScheduledInterviews = (token) => {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
+
+export const searchJobsByName = (j_name, token) => {
+  return axios.post(
+    `http://localhost:4000/hr/searchJob`,
+    { j_name },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+};

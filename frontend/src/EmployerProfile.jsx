@@ -9,6 +9,7 @@ import {
     getApplicants,
     updateJob,
     getScheduledInterviews,
+    searchJobsByName,
 } from './services/employerService';
 import { scheduleInterview } from './services/scheduleServices';
 
@@ -28,6 +29,9 @@ const EmployerProfile = () => {
     const [applicants, setApplicants] = useState([]);
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [selectedApplicant, setSelectedApplicant] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
 
     const [scheduleForm, setScheduleForm] = useState({
         date: '',
@@ -72,6 +76,19 @@ const EmployerProfile = () => {
     }, []);
 
     useEffect(() => {
+        const token = sessionStorage.getItem('employerToken');
+        if (activeTab === 'search' && searchQuery) {
+            setIsSearching(true);
+            searchJobsByName(searchQuery, token)
+                .then((res) => setSearchResults(res.data.data || []))
+                .catch(() => setSearchResults([]))
+                .finally(() => setIsSearching(false));
+        } else {
+            setSearchResults([]);
+        }
+    }, [activeTab, searchQuery]);
+
+    useEffect(() => {
         if (activeTab === 'applicants') {
             const token = sessionStorage.getItem('employerToken');
             if (!token) return;
@@ -108,8 +125,8 @@ const EmployerProfile = () => {
         getScheduledInterviews(token)
             .then((res) => setInterviews(res.data.data || []))
             .catch(() => {
-            setInterviews([]); 
-            })           // treat errors as no interviews instead of error
+                setInterviews([]);
+            }) // treat errors as no interviews instead of error
             .finally(() => setLoading(false));
     };
 
@@ -236,6 +253,7 @@ const EmployerProfile = () => {
                             >
                                 My Jobs
                             </button>
+
                             {!editingJob && !showJobForm && (
                                 <button
                                     className={`btn me-2 ${
@@ -258,6 +276,16 @@ const EmployerProfile = () => {
                                 onClick={handleInterviewsClick}
                             >
                                 Scheduled Interviews
+                            </button>
+                            <button
+                                className={`btn me-2 ${
+                                    activeTab === 'search'
+                                        ? 'btn-primary'
+                                        : 'btn-outline-primary'
+                                }`}
+                                onClick={() => setActiveTab('search')}
+                            >
+                                🔎 Search Jobs
                             </button>
 
                             <button
@@ -374,15 +402,15 @@ const EmployerProfile = () => {
                                                     <strong>Role:</strong>{' '}
                                                     {job.j_name}
                                                 </h4>
-                                                <p className="mb-1">
+                                                <p>
                                                     <strong>Location:</strong>{' '}
                                                     {job.location}
                                                 </p>
-                                                <p className="mb-1">
+                                                <p>
                                                     <strong>Skills:</strong>{' '}
                                                     {job.skills}
                                                 </p>
-                                                <p className="mb-1">
+                                                <p>
                                                     <strong>Posted On:</strong>{' '}
                                                     {new Date(
                                                         job.posted_date
@@ -422,6 +450,44 @@ const EmployerProfile = () => {
                                     </ul>
                                 ) : (
                                     <p>No jobs posted yet.</p>
+                                )}
+                            </div>
+                        )}
+                        {activeTab === 'search' && (
+                            <div className="mt-3">
+                                <h5>🔎 Search Jobs</h5>
+                                <input
+                                    type="text"
+                                    placeholder="Enter job name"
+                                    className="form-control mb-2"
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                />
+                                {isSearching ? (
+                                    <p>Searching...</p>
+                                ) : searchResults.length > 0 ? (
+                                    <ul className="list-group">
+                                        {searchResults.map((job, idx) => (
+                                            <li
+                                                key={idx}
+                                                className="list-group-item"
+                                            >
+                                                <strong>{job.j_name}</strong>{' '}
+                                                <br />
+                                                <span>{job.location}</span>{' '}
+                                                <br />
+                                                <em>{job.skills}</em>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    searchQuery && (
+                                        <p>
+                                            No jobs found for "{searchQuery}".
+                                        </p>
+                                    )
                                 )}
                             </div>
                         )}
@@ -525,12 +591,10 @@ const EmployerProfile = () => {
                                         ))}
                                     </div>
                                 ) : (
-                                   
-                                        <p >
-                                            Once you schedule interviews, they
-                                            will appear here.
-                                        </p>
-                                    
+                                    <p>
+                                        Once you schedule interviews, they will
+                                        appear here.
+                                    </p>
                                 )}
                             </div>
                         )}
@@ -595,6 +659,7 @@ const EmployerProfile = () => {
                                 )}
                             </div>
                         )}
+
                         <Modal
                             show={showScheduleModal}
                             onHide={() => setShowScheduleModal(false)}

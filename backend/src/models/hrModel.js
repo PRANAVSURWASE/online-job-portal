@@ -88,9 +88,9 @@ exports.updateJobById = (j_id, jobData) => {
   });
 };
 
-exports.searchJobsByName=(j_name)=>{
+exports.searchJobsByName=(j_name,hr_id)=>{
     return new Promise((resolve, reject) => {
-        db.query("SELECT * FROM job WHERE j_name LIKE ?", [`%${j_name}%`], (err, result) => {
+        db.query("SELECT * FROM job WHERE j_name LIKE ? and  hr_id=?", [`%${j_name}%`,hr_id], (err, result) => {
             console.log(err, result);
             if (err) {
                 reject(err);

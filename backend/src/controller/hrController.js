@@ -165,6 +165,7 @@ exports.deleteJobById = (req, res) => {
     });
 };
 
+
 exports.updateJob = (req, res) => {
   let { j_id } = req.params;
   j_id = parseInt(j_id, 10);
@@ -196,15 +197,27 @@ console.log("job=>"+j_name, "skills=>"+skills,"location=>" +location);
     });
 };
 
+
 exports.searchJobsByName = (req, res) => {
   let { j_name } = req.body;
-
+  const token = req.headers["authorization"]?.split(" ")[1];
+  //console.log("Token in searchJobsByName controller=> ",token);
+  if (!token) {
+    return res.status(401).json({ msg: "No token provided" });
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const hr_id = decoded.id;
+  if (!hr_id) {
+    return res.status(401).json({ msg: "HR ID not found" });
+  }
+  if (!decoded || !decoded.id) {
+    return res.status(403).json({ msg: "Invalid token" });
+  }
   // Validate input
   if (!j_name) {
     return res.status(400).json({ msg: "Job name is required" });
   }
-
-  let promise = hrModel.searchJobsByName(j_name);
+  let promise = hrModel.searchJobsByName(j_name,hr_id);
   promise
     .then((result) => {
       if (result.length > 0) {
@@ -219,6 +232,7 @@ exports.searchJobsByName = (req, res) => {
         .json({ msg: "Internal server Error", error: err.message || err });
     });
 };
+
 
 exports.getJobsAppliedByUser = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];

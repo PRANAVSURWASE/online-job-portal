@@ -13,8 +13,8 @@ router.get("/viewJob", hrCtrl.getJobById);
 router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
 router.put('/updateJobById/:j_id', hrCtrl.updateJob);
 router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
-router.post("/searchJob/:job_name", hrCtrl.searchJobsByName);
-router.post("/searchJob/:job_name", hrCtrl.searchJobsByName);
+router.post("/searchJob", hrCtrl.searchJobsByName);
+
 router.get("/getApplicants",hrCtrl.getJobsAppliedByUser);
 
 
