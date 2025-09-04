@@ -277,16 +277,7 @@ const EmployerProfile = () => {
                             >
                                 Scheduled Interviews
                             </button>
-                            <button
-                                className={`btn me-2 ${
-                                    activeTab === 'search'
-                                        ? 'btn-primary'
-                                        : 'btn-outline-primary'
-                                }`}
-                                onClick={() => setActiveTab('search')}
-                            >
-                                🔎 Search Jobs
-                            </button>
+                        
 
                             <button
                                 className={`btn ${
@@ -302,6 +293,16 @@ const EmployerProfile = () => {
 
                         {activeTab === 'jobs' && (
                             <div>
+                                <input
+                                    type="text"
+                                    placeholder="🔎 Search jobs..."
+                                    className="form-control mb-3"
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                />
+
                                 {/*Job Form (Create / Update) */}
                                 {(showJobForm || editingJob) && (
                                     <form
@@ -391,103 +392,78 @@ const EmployerProfile = () => {
 
                                 {loading ? (
                                     <p>Loading jobs...</p>
-                                ) : jobs.length > 0 ? (
+                                ) : (
                                     <ul className="list-group">
-                                        {jobs.map((job) => (
-                                            <li
-                                                key={job.j_id}
-                                                className="list-group-item"
-                                            >
-                                                <h4>
-                                                    <strong>Role:</strong>{' '}
-                                                    {job.j_name}
-                                                </h4>
-                                                <p>
-                                                    <strong>Location:</strong>{' '}
-                                                    {job.location}
-                                                </p>
-                                                <p>
-                                                    <strong>Skills:</strong>{' '}
-                                                    {job.skills}
-                                                </p>
-                                                <p>
-                                                    <strong>Posted On:</strong>{' '}
-                                                    {new Date(
-                                                        job.posted_date
-                                                    ).toLocaleString('en-US', {
-                                                        day: '2-digit',
-                                                        month: 'short',
-                                                        year: 'numeric',
-                                                    })}
-                                                </p>
-                                                <button
-                                                    className="btn btn-danger btn-sm mt-2 me-2"
-                                                    onClick={() =>
-                                                        handleDeleteJob(
-                                                            job.j_id
-                                                        )
-                                                    }
+                                        {jobs
+                                            .filter((job) =>
+                                                job.j_name
+                                                    .toLowerCase()
+                                                    .includes(
+                                                        searchQuery.toLowerCase()
+                                                    )
+                                            )
+                                            .map((job) => (
+                                                <li
+                                                    key={job.j_id}
+                                                    className="list-group-item"
                                                 >
-                                                    Delete Job
-                                                </button>
+                                                    <h4>
+                                                        <strong>Role:</strong>{' '}
+                                                        {job.j_name}
+                                                    </h4>
+                                                    <p>
+                                                        <strong>
+                                                            Location:
+                                                        </strong>{' '}
+                                                        {job.location}
+                                                    </p>
+                                                    <p>
+                                                        <strong>Skills:</strong>{' '}
+                                                        {job.skills}
+                                                    </p>
+                                                    <p>
+                                                        <strong>
+                                                            Posted On:
+                                                        </strong>{' '}
+                                                        {new Date(
+                                                            job.posted_date
+                                                        ).toLocaleString(
+                                                            'en-US',
+                                                            {
+                                                                day: '2-digit',
+                                                                month: 'short',
+                                                                year: 'numeric',
+                                                            }
+                                                        )}
+                                                    </p>
+                                                    <button
+                                                        className="btn btn-danger btn-sm mt-2 me-2"
+                                                        onClick={() =>
+                                                            handleDeleteJob(
+                                                                job.j_id
+                                                            )
+                                                        }
+                                                    >
+                                                        Delete Job
+                                                    </button>
 
-                                                <button
-                                                    className="btn btn-primary btn-sm mt-2 me-2"
-                                                    onClick={() => {
-                                                        setEditingJob(job);
-                                                        setJobForm({
-                                                            j_name: job.j_name,
-                                                            location:
-                                                                job.location,
-                                                            skills: job.skills,
-                                                        });
-                                                    }}
-                                                >
-                                                    Update
-                                                </button>
-                                            </li>
-                                        ))}
+                                                    <button
+                                                        className="btn btn-primary btn-sm mt-2 me-2"
+                                                        onClick={() => {
+                                                            setEditingJob(job);
+                                                            setJobForm({
+                                                                j_name: job.j_name,
+                                                                location:
+                                                                    job.location,
+                                                                skills: job.skills,
+                                                            });
+                                                        }}
+                                                    >
+                                                        Update
+                                                    </button>
+                                                </li>
+                                            ))}
                                     </ul>
-                                ) : (
-                                    <p>No jobs posted yet.</p>
-                                )}
-                            </div>
-                        )}
-                        {activeTab === 'search' && (
-                            <div className="mt-3">
-                                <h5>🔎 Search Jobs</h5>
-                                <input
-                                    type="text"
-                                    placeholder="Enter job name"
-                                    className="form-control mb-2"
-                                    value={searchQuery}
-                                    onChange={(e) =>
-                                        setSearchQuery(e.target.value)
-                                    }
-                                />
-                                {isSearching ? (
-                                    <p>Searching...</p>
-                                ) : searchResults.length > 0 ? (
-                                    <ul className="list-group">
-                                        {searchResults.map((job, idx) => (
-                                            <li
-                                                key={idx}
-                                                className="list-group-item"
-                                            >
-                                                <strong>{job.j_name}</strong>{' '}
-                                                <br />
-                                                <span>{job.location}</span>{' '}
-                                                <br />
-                                                <em>{job.skills}</em>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    searchQuery && (
-                                        <p>
-                                            No jobs found for "{searchQuery}".
-                                        </p>
-                                    )
                                 )}
                             </div>
                         )}
