@@ -160,3 +160,26 @@ exports.updateUser=(req,res)=>{
       })
 
 }
+
+exports.searchJobsByName=(req, res) => {
+  let { j_name } = req.body;
+
+  // Validate input
+  if (!j_name) {
+    return res.status(400).json({ msg: "Job name is required" });
+  }
+  let promise = userModel.searchJobsByName(j_name);
+  promise
+    .then((result) => {
+      if (result.length > 0) {
+        res.status(200).json({ msg: "Jobs found", data: result });
+      } else {
+        res.status(404).json({ msg: "No jobs found with the given name" });
+      }
+    })
+    .catch((err) => {
+      res
+        .status(500)
+        .json({ msg: "Internal server Error", error: err.message || err });
+    });
+};

@@ -53,3 +53,15 @@ exports.updateUser =(uid,name,email,contact,password,skills,education)=>{
 
 }
     
+exports.searchJobsByName=(j_name)=>{
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM job WHERE j_name LIKE ? ", [`%${j_name}%`], (err, result) => {
+            console.log(err, result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
