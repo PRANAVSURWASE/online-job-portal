@@ -6,6 +6,7 @@ import {
     applyForJobs,
     getAppliedJobs,
     searchJobsByName,
+    getScheduledInterview,
 } from './services/jobseekerService';
 
 const JobSeekerProfile = () => {
@@ -18,6 +19,9 @@ const JobSeekerProfile = () => {
     const [loadingJobs, setLoadingJobs] = useState(false);
     const [loadingAppliedJobs, setLoadingAppliedJobs] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [interviews, setInterviews] = useState([]);
+const [loadingInterviews, setLoadingInterviews] = useState(false);
+
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -95,6 +99,20 @@ const JobSeekerProfile = () => {
         }
     }, [activeTab, user]);
 
+    useEffect(() => {
+  if (activeTab === 'interviews') {
+    const token = sessionStorage.getItem('jobSeekerToken');
+    if (!token) return;
+
+    setLoadingInterviews(true);
+    getScheduledInterview(token)
+      .then((res) => setInterviews(res.data.data || []))
+      .catch(() => setInterviews([]))
+      .finally(() => setLoadingInterviews(false));
+  }
+}, [activeTab]);
+
+
     const handleApplyJob = (j_id, hr_id) => {
         const token = sessionStorage.getItem('jobSeekerToken');
         const uid = user?.uid;
@@ -124,8 +142,6 @@ const JobSeekerProfile = () => {
                 }
             });
     };
-
-   
 
     if (!user) return <p className="text-center mt-5">Loading profile...</p>;
 
@@ -202,7 +218,7 @@ const JobSeekerProfile = () => {
                                 View All Jobs
                             </button>
                             <button
-                                className={`btn ${
+                                className={`btn  me-2 ${
                                     activeTab === 'applied'
                                         ? 'btn-primary'
                                         : 'btn-outline-primary'
@@ -210,6 +226,16 @@ const JobSeekerProfile = () => {
                                 onClick={() => setActiveTab('applied')}
                             >
                                 Applied Jobs
+                            </button>
+                            <button
+                                className={`btn me-2 ${
+                                    activeTab === 'interviews'
+                                        ? 'btn-primary'
+                                        : 'btn-outline-primary'
+                                }`}
+                                onClick={() => setActiveTab('interviews')}
+                            >
+                                My Interviews
                             </button>
                         </div>
 
@@ -339,6 +365,37 @@ const JobSeekerProfile = () => {
                                 )}
                             </div>
                         )}
+                        {activeTab === 'interviews' && (
+  <div>
+    {loadingInterviews ? (
+      <p>Loading interviews...</p>
+    ) : interviews.length > 0 ? (
+      <ul className="list-group">
+        {interviews.map((intv, index) => (
+          <li key={index} className="list-group-item">
+            <h5><strong>Job:</strong> {intv.jobTitle}</h5>
+            <p><strong>Company:</strong> {intv.companyname}</p>
+            <p><strong>HR:</strong> {intv.hrName}</p>
+
+            <p><strong>Date:</strong> {new Date(intv.date).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> {intv.time}</p>
+            <p><strong>location:</strong> {intv.location}</p>
+            <p><strong>Mode:</strong> {intv.mode}</p>
+            {intv.mode === 'Online' && (
+              <p><strong>Meeting Link:</strong> <a href={intv.meetingLink} target="_blank" rel="noreferrer">Join</a></p>
+            )}
+            {intv.mode === 'Offline' && (
+              <p><strong>Location:</strong> {intv.location}</p>
+            )}
+            <p><strong>Notes:</strong> {intv.notes}</p>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No scheduled interviews found.</p>
+    )}
+  </div>
+)}
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 let userModel = require('../models/userModel');
 let applicationModel = require('../models/applicationModel');
+let scheduleModel= require("../models/scheduleModel")
 let jwt = require('jsonwebtoken');
 
 
@@ -182,4 +183,41 @@ exports.searchJobsByName=(req, res) => {
         .status(500)
         .json({ msg: "Internal server Error", error: err.message || err });
     });
+};
+
+exports.viewInterviews=(req,res)=>{
+
+    try{
+     const token = req.headers["authorization"]?.split(" ")[1]; 
+        if (!token) {
+            return res.status(401).json({ msg: "No token provided" });
+        }
+
+        // Decode JWT to get user id
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const uid = decoded.uid;   // from token
+        console.log("user ID:" ,uid);
+    
+
+     scheduleModel.viewInterviews(uid)
+            .then(result => {
+                if (result.length > 0) {
+                    res.status(200).json({ 
+                        msg: "Scheduled interview fetched successfully", 
+                        data: result 
+                    });
+                } else {
+                    res.status(404).json({ msg: "No Schedule interview found for this user" });
+                }
+            })
+            .catch(err => {
+                res.status(500).json({ 
+                    msg: "Internal server error", 
+                    error: err.message 
+                });
+            });
+
+    } catch (err) {
+        res.status(401).json({ msg: "Invalid token", error: err.message });
+    }
 };

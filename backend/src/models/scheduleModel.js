@@ -51,6 +51,31 @@ exports.getScheduledInterviewsByHr = (hr_id) => {
     });
 };
 
+exports.viewInterviews=(uid)=>{
+    return new Promise((resolve,reject)=>{
+        db.query(`select 
+                    s.*,
+                    hr.company_name as companyname,
+                    j.j_name as jobTitle,
+                    hr.name AS hrName,
+                    s.date,
+                    s.time,
+                    s.mode,
+                    s.location,
+                    s.meetingLink ,
+                    s.notes 
+                    from schedules s 
+                    join job j on s.j_id=j.j_id
+                    join hr hr on s.hr_id=hr.hr_id
+                    where s.uid= ? 
+            `,[uid],(err,result)=>{
+                if(err) reject(err);
+                else resolve(result);
+            }
+        )
+    })
+}
+
 
 exports.updateInterviewStatus = (id, status) => {
     return new Promise((resolve, reject) => {

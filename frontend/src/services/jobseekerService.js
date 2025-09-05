@@ -61,3 +61,9 @@ export const searchJobsByName = (j_name) => {
     }
   );
 };
+
+export const getScheduledInterview=(token)=>{
+    return axios.get(`http://localhost:4000/users/myScheduleInterview`,
+        { headers: { Authorization:`Bearer ${token}` } }
+    )
+}

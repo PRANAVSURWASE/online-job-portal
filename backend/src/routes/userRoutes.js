@@ -12,6 +12,8 @@ router.post("/userRegister",userController.registerUser);
 router.post('/applyJob',userController.applyForJob);
 router.get('/viewApplicationsHistory', userController.viewApplicationsHistory);
 router.post("/searchJob", userController.searchJobsByName);
+router.get("/myScheduleInterview",userController.viewInterviews)
+
 
 
 
