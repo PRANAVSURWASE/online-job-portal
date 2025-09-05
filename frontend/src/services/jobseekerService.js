@@ -17,14 +17,17 @@ export const getJobSeekerProfile = (token) => {
         })
     return promise;
 };
-export const getUpdatedJobSeekerProfile =(formData)=>{
-    let token =sessionStorage.getItem("jobSeekerToken");
-    let promise = axios.put("http://localhost:4000/users/updateUser",formData,{
-         headers: { Authorization: `Bearer ${token}` },
 
-    })
+export const getUpdatedJobSeekerProfile = (formData) => {
+  let token = sessionStorage.getItem("jobSeekerToken");
+  let promise = axios.put("http://localhost:4000/users/updateUser", formData, {
+    headers: { 
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data"   
+    },
+  });
     return promise;
-}
+};
 
 export const getAllJobs = () => {
   let promise= axios.get(`http://localhost:4000/jobs/listAllJobs`);
