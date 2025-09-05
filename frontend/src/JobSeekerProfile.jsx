@@ -381,9 +381,26 @@ const [loadingInterviews, setLoadingInterviews] = useState(false);
             <p><strong>Time:</strong> {intv.time}</p>
             <p><strong>location:</strong> {intv.location}</p>
             <p><strong>Mode:</strong> {intv.mode}</p>
-            {intv.mode === 'Online' && (
-              <p><strong>Meeting Link:</strong> <a href={intv.meetingLink} target="_blank" rel="noreferrer">Join</a></p>
-            )}
+            {intv.mode ===
+                                                            'ONLINE' && (
+                                                            <p className="card-text">
+                                                                <strong>
+                                                                    Meeting
+                                                                    Link:
+                                                                </strong>{' '}
+                                                                <a
+                                                                    href={
+                                                                        intv.meetingLink
+                                                                    }
+                                                                    target="_blank"
+                                                                    rel="noreferrer"
+                                                                >
+                                                                    {
+                                                                        intv.meetingLink
+                                                                    }
+                                                                </a>
+                                                            </p>
+                                                        )}
             {intv.mode === 'Offline' && (
               <p><strong>Location:</strong> {intv.location}</p>
             )}
