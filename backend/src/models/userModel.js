@@ -34,25 +34,19 @@ exports.getUserById = (id) => {
   });
 };
 
-exports.updateUser =(uid,name,email,contact,password,skills,education)=>{
+exports.updateUser = (uid, name, email, contact, password, skills, education, resume) => {
   return new Promise((resolve, reject) => {
-    const query = `
-      UPDATE user
-      SET name = ?, email = ?, contact = ?, password = ?, skills = ?, education = ?
-      WHERE uid = ?
-    `;
-    const values = [name, email, contact, password, skills, education, uid];
-
+    const query = `UPDATE user SET name = ?, email = ?, contact = ?, password = ?, skills = ?, education = ?, resume = ? WHERE uid = ?`;
+    const values = [name, email, contact, password, skills, education, resume, uid];
     db.query(query, values, (err, result) => {
       if (err) {
         return reject(err);
       }
-      resolve(result); // You can resolve with result or updated user info
+      resolve(result);
     });
   });
+};
 
-}
-    
 exports.searchJobsByName=(j_name)=>{
     return new Promise((resolve, reject) => {
         db.query("SELECT * FROM job WHERE j_name LIKE ? ", [`%${j_name}%`], (err, result) => {

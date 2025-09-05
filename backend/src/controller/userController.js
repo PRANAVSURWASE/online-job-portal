@@ -140,27 +140,27 @@ exports.getUserProfile = (req, res) => {
   }
 };
 
-exports.updateUser=(req,res)=>{
-    const {uid} =req.user;
-    const{name,email,contact,password,skills,education}=req.body;
+exports.updateUser = (req, res) => {
+  const { uid } = req.user;
+  const { name, email, contact, password, skills, education } = req.body;
+    console.log("name, email, contact, password", name, email, contact, password);
 
-    if(!name||!email||!contact||!password||!skills||!education)
-    {
-        return res.status(400).json({ msg: "All fields are required" });
-    }
-
-    let promise=userModel.updateUser(uid,name,email,contact,password,skills,education);
-    promise.then(()=>{
-         res.json({
+    if (!name || !email || !contact || !password || !skills || !education) {
+    return res.status(400).json({ msg: "All fields are required" });
+  }
+    const resume = req.file ? req.file.filename : null;
+    let promise = userModel.updateUser(uid,name,email,contact,password,skills,education,resume);
+    promise.then(() => {
+      res.json({
         msg: "Profile updated successfully",
-        user: { uid, name, email, contact,password,skills,education}
-      })
+        user: {uid,name,email,contact,password,skills,education,resume, },
+      });
     })
-      .catch((err)=>{
-        res.status(500).json({ msg: "DB error", error: err.message || err });
-      })
+    .catch((err) => {
+      res.status(500).json({ msg: "DB error", error: err.message || err });
+    });
+};
 
-}
 
 exports.searchJobsByName=(req, res) => {
   let { j_name } = req.body;

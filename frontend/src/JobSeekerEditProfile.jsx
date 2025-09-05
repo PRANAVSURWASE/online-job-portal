@@ -11,6 +11,7 @@ const JobSeekerEditProfile = () => {
     password: "",
     skills: "",
     education: "",
+    resume: null,
   });
   const [msg, setMsg] = useState("");
   const [alertType, setAlertType] = useState("success");
@@ -37,31 +38,41 @@ const JobSeekerEditProfile = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    getUpdatedJobSeekerProfile(formData)
-      .then((res) => {
-        setMsg(" Profile updated successfully!");
-        setAlertType("success");
+  const data = new FormData();
+  data.append("name", formData.name);
+  data.append("email", formData.email);
+  data.append("contact", formData.contact);
+  data.append("password", formData.password);
+  data.append("skills", formData.skills);
+  data.append("education", formData.education);
 
-        // update session storage
-        sessionStorage.setItem("jobSeekerData", JSON.stringify(res.data.user));
+  if (formData.resume) {
+    data.append("resume", formData.resume);
+  }
 
-        // hide message and redirect after 2s
-        setTimeout(() => {
-          setMsg("");
-          navigate("/jobseeker-profile", {
-            state: { user: res.data.user, msg: res.data.msg },
-          });
-        }, 2000);
-      })
-      .catch((err) => {
-        setMsg(err.response?.data?.msg || " Something went wrong!");
-        setAlertType("danger");
+  getUpdatedJobSeekerProfile(data)   // pass FormData instead of JSON
+    .then((res) => {
+      setMsg("Profile updated successfully!");
+      setAlertType("success");
 
-        setTimeout(() => setMsg(""), 3000);
-      });
-  };
+      sessionStorage.setItem("jobSeekerData", JSON.stringify(res.data.user));
+
+      setTimeout(() => {
+        setMsg("");
+        navigate("/jobseeker-profile", {
+          state: { user: res.data.user, msg: res.data.msg },
+        });
+      }, 2000);
+    })
+    .catch((err) => {
+      setMsg(err.response?.data?.msg || "Something went wrong!");
+      setAlertType("danger");
+
+      setTimeout(() => setMsg(""), 3000);
+    });
+};
 
   return (
     <div className="container " style={{ marginTop: "80px" }}>
@@ -138,6 +149,19 @@ const JobSeekerEditProfile = () => {
               value={formData.education}
               onChange={handleChange}
               placeholder="e.g. B.Tech in Computer Science"
+            />
+          </div>
+          {/* Resume Upload */}
+          <div className="mb-3">
+            <label className="form-label">Upload Resume (PDF)</label>
+            <input
+              type="file"
+              name="resume"
+              className="form-control"
+              accept="application/pdf"
+              onChange={(e) =>
+                setFormData({ ...formData, resume: e.target.files[0] })
+              }
             />
           </div>
 
