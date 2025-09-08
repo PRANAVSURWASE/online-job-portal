@@ -90,7 +90,7 @@ const JobSeekerProfile = () => {
         .then((res) => {
           setAppliedJobs(res.data.data || []);
         })
-        .catch(() => setError("No applied jobs."))
+        //.catch(() => setError("No applied jobs."))
         .finally(() => setLoadingAppliedJobs(false));
     }
   }, [activeTab, user]);

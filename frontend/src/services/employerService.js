@@ -4,12 +4,10 @@ export const registerEmployer=(formData)=>{
     let promise= axios
     .post("http://localhost:4000/hr/hrRegister",formData)
     return promise;
-
 }
 
 export const loginEmployee=(formData)=>{
     let promise = axios.post('http://localhost:4000/auth/hrLogin',formData)
-
     return promise;
 };
 
@@ -64,8 +62,6 @@ export const getScheduledInterviews = (token) => {
   });
 };
 
-
-
 export const searchJobsByName = (j_name, token) => {
   return axios.post(
     `http://localhost:4000/hr/searchJob`,
@@ -74,4 +70,12 @@ export const searchJobsByName = (j_name, token) => {
       headers: { Authorization: `Bearer ${token}` },
     }
   );
+};
+
+// New function for downloading resume
+export const downloadResume = (filename, token) => {
+  return axios.get(`http://localhost:4000/hr/downloadResume/${filename}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    responseType: 'blob', // Important for file download
+  });
 };

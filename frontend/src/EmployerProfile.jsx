@@ -10,6 +10,7 @@ import {
   updateJob,
   getScheduledInterviews,
   searchJobsByName,
+  downloadResume, // Add this import
 } from "./services/employerService";
 import {
   scheduleInterview,
@@ -25,6 +26,7 @@ const EmployerProfile = () => {
   const [showJobForm, setShowJobForm] = useState(false);
   const [interviews, setInterviews] = useState([]);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [downloadingResume, setDownloadingResume] = useState(null); // Track which resume is downloading
 
   const [jobForm, setJobForm] = useState({
     j_name: "",
@@ -50,6 +52,38 @@ const EmployerProfile = () => {
   const [editingJob, setEditingJob] = useState(null);
   const navigate = useNavigate();
 
+  // Add download resume function
+  const handleDownloadResume = async (applicant) => {
+    const token = sessionStorage.getItem("employerToken");
+    if (!token) return;
+    
+    try {
+      setDownloadingResume(applicant.uid); // Show loading state
+      
+      // Extract filename from the resume_file path
+      const filename = applicant.resume_file.split('/').pop();
+      
+      const response = await downloadResume(filename, token);
+      
+      // Create blob and download
+      const blob = new Blob([response.data]);
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${applicant.name}_Resume_${filename}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(downloadUrl);
+      
+    } catch (error) {
+      console.log('Download error:', error);
+      alert('Failed to download resume. Please try again.');
+    } finally {
+      setDownloadingResume(null);
+    }
+  };
+
   // Fetch Employer Profile
   useEffect(() => {
     const token = sessionStorage.getItem("employerToken");
@@ -57,7 +91,6 @@ const EmployerProfile = () => {
       navigate("/employer-login");
       return;
     }
-
     getEmployerProfile(token)
       .then((res) => {
         setEmployer(res.data.hr);
@@ -70,7 +103,6 @@ const EmployerProfile = () => {
   useEffect(() => {
     const token = sessionStorage.getItem("employerToken");
     if (!token) return;
-
     setLoading(true);
     getEmployerJobs(token)
       .then((res) => setJobs(res.data.data || []))
@@ -95,7 +127,6 @@ const EmployerProfile = () => {
     if (activeTab === "applicants") {
       const token = sessionStorage.getItem("employerToken");
       if (!token) return;
-
       setLoading(true);
       getApplicants(token)
         .then((res) => setApplicants(res.data.apply_jobs || []))
@@ -108,7 +139,6 @@ const EmployerProfile = () => {
   const handleDeleteJob = (j_id) => {
     if (!window.confirm("Are you sure you want to delete this job?")) return;
     const token = sessionStorage.getItem("employerToken");
-    // console.log("Token:", token);
     deleteJob(j_id, token)
       .then((res) => {
         alert(res.data.msg);
@@ -128,7 +158,7 @@ const EmployerProfile = () => {
       .then((res) => setInterviews(res.data.data || []))
       .catch(() => {
         setInterviews([]);
-      }) // treat errors as no interviews instead of error
+      })
       .finally(() => setLoading(false));
   };
 
@@ -168,8 +198,6 @@ const EmployerProfile = () => {
     setIsRejecting(true);
     rejectApplication(uid, j_id)
       .then(() => {
-        //alert(res.data.msg);
-        // Refresh applicants list
         const token = sessionStorage.getItem("employerToken");
         getApplicants(token)
           .then((res) => setApplicants(res.data.apply_jobs || []))
@@ -195,9 +223,8 @@ const EmployerProfile = () => {
 
     try {
       const res = await scheduleInterview(token, {
-        uid: selectedApplicant.uid, // applicant ID
-        j_id: selectedApplicant.j_id, // job ID
-
+        uid: selectedApplicant.uid,
+        j_id: selectedApplicant.j_id,
         ...scheduleForm,
       });
 
@@ -207,7 +234,6 @@ const EmployerProfile = () => {
         .then((res) => setInterviews(res.data.data || []))
         .catch(() => setError("Failed to load scheduled interviews."));
 
-      // Reset form + close modal
       setShowScheduleModal(false);
       setScheduleForm({
         date: "",
@@ -268,7 +294,6 @@ const EmployerProfile = () => {
                 My Jobs
               </button>
 
-
               <button
                 className={`btn me-2 ${
                   activeTab === "interviews"
@@ -302,7 +327,6 @@ const EmployerProfile = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
-                {/*Job Form (Create / Update) */}
                 {(showJobForm || editingJob) && (
                   <form
                     onSubmit={editingJob ? handleUpdateJob : handleCreateJob}
@@ -357,32 +381,27 @@ const EmployerProfile = () => {
                     <button type="submit" className="btn btn-primary me-2">
                       {editingJob ? "Update Job" : "Save Job"}
                     </button>
-                    
                   </form>
                 )}
                 <button
-                className={`btn me-2 ${
-                  activeTab === "jobs" ? "btn-primary" : "btn-outline-primary"
-                }`}
-                onClick={() => {
-                  if (showJobForm) {
-                    // If form is open → cancel it
-                    setShowJobForm(false);
-                    setEditingJob(null);
-                    setJobForm({ j_name: "", location: "", skills: "" });
-                  } else {
-                    // If form is closed → open it
-                    setShowJobForm(true);
-                  }
-                }}
-              >
-                {showJobForm ? "Cancel" : "Create Job"}
-              </button>
+                  className={`btn me-2 ${
+                    activeTab === "jobs" ? "btn-primary" : "btn-outline-primary"
+                  }`}
+                  onClick={() => {
+                    if (showJobForm) {
+                      setShowJobForm(false);
+                      setEditingJob(null);
+                      setJobForm({ j_name: "", location: "", skills: "" });
+                    } else {
+                      setShowJobForm(true);
+                    }
+                  }}
+                >
+                  {showJobForm ? "Cancel" : "Create Job"}
+                </button>
                 {loading ? (
                   <p>Loading jobs...</p>
-                  
                 ) : (
-                    
                   <ul className="list-group">
                     {jobs
                       .filter((job) =>
@@ -391,9 +410,7 @@ const EmployerProfile = () => {
                           .includes(searchQuery.toLowerCase())
                       )
                       .map((job) => (
-                        
                         <li key={job.j_id} className="list-group-item">
-                            
                           <h4>
                             <strong>Role:</strong> {job.j_name}
                           </h4>
@@ -546,16 +563,27 @@ const EmployerProfile = () => {
                             }
                           )}
                         </p>
-                        <div className="d-flex gap-5">
+                        
+                        <div className="d-flex gap-2">
+                          <Button
+                            variant="info"
+                            size="sm"
+                            onClick={() => handleDownloadResume(applicant)}
+                            disabled={downloadingResume === applicant.uid}
+                          >
+                            {downloadingResume === applicant.uid 
+                              ? "Downloading..." 
+                              : "Download Resume"
+                            }
+                          </Button>
                           <button
-                            className="btn btn-success btn-sm "
+                            className="btn btn-success btn-sm"
                             onClick={() => handleSchedule(applicant)}
                           >
-                            {" "}
                             Schedule Interview
                           </button>
                           <button
-                            className="btn btn-danger btn-sm "
+                            className="btn btn-danger btn-sm"
                             onClick={() => {
                               if (
                                 window.confirm(

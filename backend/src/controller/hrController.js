@@ -1,7 +1,8 @@
 let hrModel = require("../models/hrModel");
 let applicationModel = require("../models/applicationModel");
 let jwt = require("jsonwebtoken");
-
+const path = require('path');
+const fs = require('fs');
 /**
  * HR Registration
  * Registers a new HR with the provided details.
@@ -251,6 +252,39 @@ exports.getJobsAppliedByUser = (req, res) => {
         .status(500)
         .json({ msg: "Internal server error", error: err.message || err });
     });
+};
+
+
+
+exports.downloadResume = (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ msg: "Token missing" });
+  }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const filename = req.params.filename;
+    // Construct the full file path (adjust path according to your file storage)
+    const filePath = path.join(__dirname, '../../uploads/resumes', filename);
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ msg: "Resume file not found" });
+    }
+    // Set headers for download
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    // Send file
+    res.download(filePath, filename, (err) => {
+      if (err) {
+        console.error('Error downloading file:', err);
+        res.status(500).json({ msg: "Error downloading resume" });
+      }
+    });
+    
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    res.status(401).json({ msg: "Invalid token" });
+  }
 };
 
 exports.deleteApplication = (req, res) => {

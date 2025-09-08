@@ -131,16 +131,16 @@ exports.getUserProfile = (req, res) => {
 
 exports.updateUser = (req, res) => {
   const { uid } = req.user;
-  const { name, email, contact, password, skills, education } = req.body;
-   if (!name || !email || !contact || !password || !skills || !education) {
+  const { name, email, contact, skills, education } = req.body;
+   if (!name || !email || !contact || !skills || !education) {
     return res.status(400).json({ msg: "All fields are required" });
   }
     const resume = req.file ? req.file.filename : null;
-    let promise = userModel.updateUser(uid,name,email,contact,password,skills,education,resume);
+    let promise = userModel.updateUser(uid,name,email,contact,skills,education,resume);
     promise.then(() => {
       res.json({
         //msg: "Profile updated successfully",
-        user: {uid,name,email,contact,password,skills,education,resume, },
+        user: {uid,name,email,contact,skills,education,resume, },
       });
     })
     .catch((err) => {

@@ -28,8 +28,8 @@ const JobSeekerRegister = () => {
       });
   };
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen hero-gradient p-5 font-[Inter]">
-      <div className="container py-3 " style={{ marginTop: "120px", width: "580px" }}>
+    <div className="flex flex-col items-center justify-start min-h-screen hero-gradient p-5 font-[Inter] pt-16">
+      <div className="container py-4 " style={{ width: "500px", maxWidth: "100%" }}>
         <h2 className="text-2xl font-bold mb-3 text-center text-white">Job Seeker Register</h2>
           <form
         className="p-4 rounded shadow bg-white "

@@ -40,7 +40,7 @@ const EmployerRegister = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen hero-gradient p-5 font-[Inter]">
+    <div className="flex flex-col items-center justify-start min-h-screen hero-gradient p-5 font-[Inter] pt-10">
       <div className="container py-3 " style={{ marginTop: "40px", width: "580px" }}>
         <h2 className="text-2xl font-bold mb-6 text-center text-white"> Employer Registration</h2>
           <form className="p-4 rounded shadow bg-white flex flex-col items-center" onSubmit={handleSubmit}>

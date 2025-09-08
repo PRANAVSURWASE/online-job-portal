@@ -32,10 +32,10 @@ exports.getUserById = (id) => {
   });
 };
 
-exports.updateUser = (uid, name, email, contact, password, skills, education, resume) => {
+exports.updateUser = (uid, name, email, contact, skills, education, resume) => {
   return new Promise((resolve, reject) => {
-    const query = `UPDATE user SET name = ?, email = ?, contact = ?, password = ?, skills = ?, education = ?, resume = ? WHERE uid = ?`;
-    const values = [name, email, contact, password, skills, education, resume, uid];
+    const query = `UPDATE user SET name = ?, email = ?, contact = ?, skills = ?, education = ?, resume = ? WHERE uid = ?`;
+    const values = [name, email, contact, skills, education, resume, uid];
     db.query(query, values, (err, result) => {
       if (err) {
         return reject(err);
