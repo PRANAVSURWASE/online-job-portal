@@ -62,7 +62,6 @@ exports.getJobById=(hr_id)=>{
 
 exports.deleteJobById=(j_id)=>{
     return new Promise((resolve, reject) => {
-        console.log("Deleting job with ID:", j_id);
         db.query("DELETE FROM job WHERE j_id = ?", [j_id], (err, result) => {
             console.log(err, result);
             if (err) {
@@ -102,8 +101,7 @@ exports.searchJobsByName=(j_name,hr_id)=>{
 }
 
 exports.findHrByEmail = (email) => {
-  console.log("Finding HR by email:", email);
-  
+  //console.log("Finding HR by email:", email);
   return new Promise((resolve, reject) => {
     db.query("SELECT * FROM hr WHERE email = ?", [email], (err, results) => {
       if (err) return reject(err);

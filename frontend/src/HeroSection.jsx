@@ -1,35 +1,48 @@
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Badge } from 'react-bootstrap';
 import { Search, TrendingUp, Users, Building } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getAdminStats } from './services/adminService';
 
-const HeroSection = () => {
-
+const HeroSection = ({token}) => {
   const navigate = useNavigate();
-  
+  const [stats, setStats] = useState({ userCount: 0, hrCount: 0, jobCount: 0 });
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await getAdminStats(token);
+        const { userCount, hrCount, jobCount } = response.data;
+        setStats({ userCount, hrCount, jobCount });
+      } catch (error) {
+        console.error("Failed to fetch admin stats:", error);
+      }
+    };
+    if (token) {
+      fetchStats();
+    }
+  }, [token]);
+
+  // Define statsDisplay here so it re-evaluates on every render with the new `stats` state
+  const statsDisplay = [
+    { icon: TrendingUp, count: stats.jobCount, label: "Active Jobs" },
+    { icon: Building, count: stats.hrCount, label: "Companies" },
+    { icon: Users, count: stats.userCount, label: "Job Seekers" }
+  ];
+
   const popularSearches = [
     "Frontend Developer", "Data Scientist", "Product Manager", 
     "UX Designer", "DevOps Engineer", "Marketing Manager"
   ];
 
-  const stats = [
-    { icon: TrendingUp, value: "50,000+", label: "Active Jobs" },
-    { icon: Building, value: "10,000+", label: "Companies" },
-    { icon: Users, value: "500,000+", label: "Job Seekers" }
-  ];
-
-    const handleApplyNow = () => {
-    
+  const handleApplyNow = () => {
     const isLoggedIn = localStorage.getItem("jobSeekerToken");
     const isRegistered = localStorage.getItem("jobSeekerRegistered");
 
     if (isLoggedIn) {
-      
       navigate("/apply-job");
     } else if (isRegistered) {
-      
       navigate("/jobseeker-login");
     } else {
-      
       navigate("/jobseeker-register");
     }
   };
@@ -47,7 +60,6 @@ const HeroSection = () => {
               that match your skills and aspirations.
             </p>
             
-           
             <div className="bg-white rounded-3 p-4 mb-4">
               <Row>
                 <Col md={8} className="mb-3 mb-md-0">
@@ -68,7 +80,6 @@ const HeroSection = () => {
               </Row>
             </div>
 
-           
             <div className="mb-4">
               <p className="mb-2">Popular searches:</p>
               <div className="d-flex flex-wrap gap-2">
@@ -86,13 +97,12 @@ const HeroSection = () => {
               </div>
             </div>
 
-          
             <Row className="mt-5">
-              {stats.map((stat, index) => (
+              {statsDisplay.map((stat, index) => (
                 <Col key={index} md={4} className="text-center mb-3">
                   <div className="d-flex align-items-center justify-content-center mb-2">
                     <stat.icon size={24} className="me-2 float-animation" />
-                    <span className="h4 mb-0 fw-bold">{stat.value}</span>
+                    <span className="h4 mb-0 fw-bold">{stat.count}</span>
                   </div>
                   <p className="mb-0 small">{stat.label}</p>
                 </Col>

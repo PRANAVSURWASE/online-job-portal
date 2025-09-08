@@ -120,3 +120,34 @@ exports.addHR = (req, res) => {
     });
 }
 
+exports.viewEnquiry = (req, res) => {
+    let promise = adminModel.viewEnquiry(); 
+    promise.then((result) => {
+        if (result.length > 0) {
+            res.json({ msg: "Enquiries fetched successfully", data: result });      
+        } else {
+            res.json({ msg: "No enquiries found" });
+        }
+    }).catch((err) => {
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
+    });
+}
+exports.deleteEnquiry = (req, res) => {
+    let { enquiry_id } = req.params;
+    // Validate input
+    if (!enquiry_id) {
+        return res.status(400).json({ msg: "Enquiry ID is required" });
+    }
+    let promise = adminModel.deleteEnquiry(enquiry_id);
+    promise.then((result) => {
+
+        if (result.affectedRows > 0) {
+            res.status(200).json({ msg: "Enquiry deleted successfully" });
+        }
+        else {
+            res.status(404).json({ msg: "No enquiry found with the given ID" });
+        }
+    }).catch((err) => {
+        res.status(500).json({ msg: "Internal server Error", error: err.message || err });
+    });
+}   

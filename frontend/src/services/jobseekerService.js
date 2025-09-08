@@ -55,15 +55,15 @@ export const getAppliedJobs = (token) => {
     );
 };
     
-export const searchJobsByName = (j_name) => {
-  return axios.post(
-    `http://localhost:4000/users/searchJob`,
-    { j_name },
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-};
+// export const searchJobsByName = (j_name) => {
+//   return axios.post(
+//     `http://localhost:4000/users/searchJob`,
+//     { j_name },
+//     {
+//       headers: { Authorization: `Bearer ${token}` },
+//     }
+//   );
+// };
 
 export const getScheduledInterview=(token)=>{
     return axios.get(`http://localhost:4000/users/myScheduleInterview`,

@@ -64,6 +64,8 @@ export const getScheduledInterviews = (token) => {
   });
 };
 
+
+
 export const searchJobsByName = (j_name, token) => {
   return axios.post(
     `http://localhost:4000/hr/searchJob`,

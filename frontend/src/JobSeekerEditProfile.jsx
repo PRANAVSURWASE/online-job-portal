@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { getUpdatedJobSeekerProfile } from "./services/jobseekerService";
+import {  useLocation,useNavigate } from "react-router-dom";
+import { getJobSeekerProfile,getUpdatedJobSeekerProfile } from "./services/jobseekerService";
 
 const JobSeekerEditProfile = () => {
   const navigate = useNavigate();
@@ -13,11 +13,13 @@ const JobSeekerEditProfile = () => {
     education: "",
     resume: null,
   });
-  const [msg, setMsg] = useState("");
+  const location = useLocation();
+  const [msg, setMsg] = useState(location.state?.msg || "");
   const [alertType, setAlertType] = useState("success");
 
   useEffect(() => {
     const userData = JSON.parse(sessionStorage.getItem("jobSeekerData"));
+    console.log("Loaded userData:", userData);
     if (userData) {
       setFormData({
         name: userData.name || "",
@@ -26,9 +28,32 @@ const JobSeekerEditProfile = () => {
         password: userData.password || "",
         skills: userData.skills || "",
         education: userData.education || "",
+        resume: userData.resume || null,
       });
+    }else {
+      let token = sessionStorage.getItem("jobSeekerToken");
+    // Fetch from backend
+    getJobSeekerProfile(token)
+        .then((res) => {
+          const user = res.data.user;
+          setFormData({
+            name: user.name || "",
+            email: user.email || "",
+            contact: user.contact || "",
+            password: user.password || "",
+            skills: user.skills || "",
+            education: user.education || "",
+            resume: user.resume || null,
+          });
+          sessionStorage.setItem("jobSeekerData", JSON.stringify(user));
+        })
+        .catch((err) => {
+          console.error("Error fetching profile:", err);
+          setMsg("Failed to load profile data.");
+          setAlertType("danger");
+        });
     }
-  }, []);
+}, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -38,47 +63,42 @@ const JobSeekerEditProfile = () => {
   };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("email", formData.email);
+    data.append("contact", formData.contact);
+    data.append("password", formData.password);
+    data.append("skills", formData.skills);
+    data.append("education", formData.education);
 
-  const data = new FormData();
-  data.append("name", formData.name);
-  data.append("email", formData.email);
-  data.append("contact", formData.contact);
-  data.append("password", formData.password);
-  data.append("skills", formData.skills);
-  data.append("education", formData.education);
+    if (formData.resume && typeof formData.resume !== "string") {
+      data.append("resume", formData.resume);
+    }
 
-  if (formData.resume) {
-    data.append("resume", formData.resume);
-  }
-
-  getUpdatedJobSeekerProfile(data)   // pass FormData instead of JSON
-    .then((res) => {
-      setMsg("Profile updated successfully!");
-      setAlertType("success");
-
-      sessionStorage.setItem("jobSeekerData", JSON.stringify(res.data.user));
-
-      setTimeout(() => {
-        setMsg("");
-        navigate("/jobseeker-profile", {
-          state: { user: res.data.user, msg: res.data.msg },
-        });
-      }, 2000);
-    })
-    .catch((err) => {
-      setMsg(err.response?.data?.msg || "Something went wrong!");
-      setAlertType("danger");
-
-      setTimeout(() => setMsg(""), 3000);
-    });
-};
+    getUpdatedJobSeekerProfile(data) // pass FormData instead of JSON
+      .then((res) => {
+        setMsg("Profile updated successfully!");
+        setAlertType("success");
+        sessionStorage.setItem("jobSeekerData", JSON.stringify(res.data.user));
+          setTimeout(() => {
+          setMsg("");
+          navigate("/jobseeker-profile", {
+            state: { user: res.data.user, msg: res.data.msg },
+          });
+        }, 2000);
+      })
+      .catch((err) => {
+        setMsg(err.response?.data?.msg || "Something went wrong!");
+        setAlertType("danger");
+        setTimeout(() => setMsg(""), 3000);
+      });
+  };
 
   return (
-    <div className="container " style={{ marginTop: "80px" }}>
+    <div className="container-fluid hero-gradient " style={{ marginTop: "58px" }}>
       <div className="card shadow p-4 col-md-6 offset-md-3">
-        <h2 className="text-center mb-4">Edit Profile</h2>
-
+        <h2 className="text-center mb-2">Edit Profile</h2>
         {msg && (
           <div className={`alert alert-${alertType} text-center`} role="alert">
             {msg}
@@ -159,12 +179,24 @@ const JobSeekerEditProfile = () => {
               name="resume"
               className="form-control"
               accept="application/pdf"
-              onChange={(e) =>
-                setFormData({ ...formData, resume: e.target.files[0] })
-              }
+              onChange={(e) =>{
+                if (e.target.files.length > 0) {
+                  setFormData({ ...formData, resume: e.target.files[0] });
+                }
+              }}
             />
           </div>
-
+          {formData.resume && typeof formData.resume === "string" && (
+            <div className="mb-3">
+              <a
+                href={`http://localhost:4000/${formData.resume}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View Current Resume
+              </a>
+            </div>
+          )}
           {/* Submit Button */}
           <div className="row">
             <div className="col">

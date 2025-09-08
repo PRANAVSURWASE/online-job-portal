@@ -14,9 +14,7 @@ router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
 router.put('/updateJobById/:j_id', hrCtrl.updateJob);
 router.delete("/deleteJob/:j_id", hrCtrl.deleteJobById);
 router.post("/searchJob", hrCtrl.searchJobsByName);
-
 router.get("/getApplicants",hrCtrl.getJobsAppliedByUser);
-
-
+router.delete("/rejectApplication", hrCtrl.deleteApplication);
 
 module.exports=router;

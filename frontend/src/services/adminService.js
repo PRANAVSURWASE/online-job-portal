@@ -31,3 +31,9 @@ export const updateHR =(hrData)=>{
   return axios.put("http://localhost:4000/admin/updateHR",hrData)
   
 }
+
+export const getEnquiries = (token) => {
+  return axios.get("http://localhost:4000/admin/viewEnquiry", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}

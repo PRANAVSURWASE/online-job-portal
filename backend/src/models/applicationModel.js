@@ -42,7 +42,7 @@ exports.viewApplicationsHistory= (uid) => {
 exports.getJobsAppliedByUser = (hr_id) => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT u.uid, u.name, u.email, u.contact, j.j_name, j.j_id,aj.apply_date
+      SELECT u.uid, u.name, u.email, u.contact,u.education,u.skills, j.j_name, j.j_id,aj.apply_date
       FROM apply_jobs aj
       JOIN user u ON aj.uid = u.uid
       JOIN job j ON aj.j_id = j.j_id
@@ -59,3 +59,17 @@ exports.getJobsAppliedByUser = (hr_id) => {
     });
   });
 };
+
+exports.deleteApplication=(uid, j_id)=>{
+    return new Promise((resolve, reject) => {
+        const query = "DELETE FROM apply_jobs WHERE uid = ? AND j_id = ?";
+        db.query(query, [uid, j_id], (err, result) => {
+            console.log(err, result);
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}

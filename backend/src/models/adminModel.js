@@ -138,3 +138,27 @@ exports.getJobCount = () => {
     });
   });
 };
+
+exports.viewEnquiry = () => {
+    return new Promise((resolve, reject) => {
+        db.query("SELECT * FROM contact_message", (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    }); 
+};
+
+exports.deleteEnquiry = (enquiry_id) => {
+    return new Promise((resolve, reject) => {
+        db.query("DELETE FROM contact_message WHERE id = ?", [enquiry_id], (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    }); 
+};              

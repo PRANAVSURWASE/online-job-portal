@@ -173,14 +173,13 @@ exports.updateJob = (req, res) => {
     return res.status(400).json({ msg: "Job ID is required" });
   }
  let { j_name, skills, location } = req.body;
-console.log("job=>"+j_name, "skills=>"+skills,"location=>" +location);
+  //console.log("job=>"+j_name, "skills=>"+skills,"location=>" +location);
 
   if (!j_name || !skills || !location) {
     return res
       .status(400)
       .json({ msg: "All fields (j_name, skills, location) are required" });
   }
-
   let promise = hrModel.updateJobById(j_id, { j_name, skills, location });
   promise
     .then((result) => {
@@ -201,7 +200,6 @@ console.log("job=>"+j_name, "skills=>"+skills,"location=>" +location);
 exports.searchJobsByName = (req, res) => {
   let { j_name } = req.body;
   const token = req.headers["authorization"]?.split(" ")[1];
-  //console.log("Token in searchJobsByName controller=> ",token);
   if (!token) {
     return res.status(401).json({ msg: "No token provided" });
   }
@@ -227,12 +225,10 @@ exports.searchJobsByName = (req, res) => {
       }
     })
     .catch((err) => {
-      res
-        .status(500)
+      res.status(500)
         .json({ msg: "Internal server Error", error: err.message || err });
     });
 };
-
 
 exports.getJobsAppliedByUser = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
@@ -241,7 +237,6 @@ exports.getJobsAppliedByUser = (req, res) => {
   }
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
   const hr_id = decoded.id; // Extract HR ID from the token
-
   let promise = applicationModel.getJobsAppliedByUser(hr_id);
   promise
     .then((result) => {
@@ -255,5 +250,28 @@ exports.getJobsAppliedByUser = (req, res) => {
       res
         .status(500)
         .json({ msg: "Internal server error", error: err.message || err });
+    });
+};
+
+exports.deleteApplication = (req, res) => {
+  let { uid, j_id } = req.body;
+  if (!uid || !j_id) {
+    return res.status(400).json({ msg: "User ID and Job ID are required" });
+  }
+  let promise = applicationModel.deleteApplication(uid, j_id);
+  promise
+    .then((result) => {
+      if (result.affectedRows > 0) {
+        res.status(200).json({ msg: "Application rejected successfully" });   
+      } else {
+        res.status(404).json({ msg: "No application found with the given User ID and Job ID" });
+      } 
+    })
+    .catch((err) => {
+      res
+        .status(500)
+        .json({ msg: "Internal server Error", error: err.message || err });
+        console.log(err);
+        
     });
 };

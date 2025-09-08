@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Alert, Container, Row, Col, Card, Button, Table, Modal, Form } from "react-bootstrap";
 import { Users, Briefcase, UserCheck, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getAdminProfile, getAdminStats, getHRs, addHR, deleteHR, updateHR } from "./services/adminService";
+import EnquiryList from "./EnquiryList"; 
+import { getAdminProfile, getAdminStats, getHRs, addHR, deleteHR, updateHR, } from "./services/adminService";
 
 const AdminProfile = () => {
   const [admin, setAdmin] = useState(null);
@@ -21,6 +22,9 @@ const AdminProfile = () => {
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false);
+  const token = sessionStorage.getItem("adminToken");
+
 
   const navigate = useNavigate();
 
@@ -128,7 +132,8 @@ const AdminProfile = () => {
   ];
 
   return (
-    <Container style={{ marginTop: "65px" }}>
+    <section className="hero-gradient">
+    <Container style={{ paddingTop: "110px", paddingBottom: "40px" }}>
       <div className="card shadow-lg p-4 mb-5 text-center">
         <h2 className="mb-3">Admin Profile</h2>
         <p className="p-2 rounded bg-light">
@@ -154,8 +159,16 @@ const AdminProfile = () => {
           <Button variant="primary" className="d-inline-flex align-items-center gap-2" onClick={handleViewHR}>
             View HR
           </Button>
+          <Button variant="primary" className="d-inline-flex align-items-center gap-2"
+          onClick={() => setShowEnquiryModal(true)} >
+            View Enquiry
+          </Button>
         </div>
-
+        <EnquiryList
+          showModal={showEnquiryModal}
+          setShowModal={setShowEnquiryModal}
+          token={token}
+        />
         <div className="shifted-div">
           <Row>
             {statCards.map((stat, index) => (
@@ -178,170 +191,170 @@ const AdminProfile = () => {
       </div>
 
       {/* Add HR Form */}
-{/* Add HR Modal */}
-<Modal show={showForm} onHide={() => setShowForm(false)} centered>
-  <Modal.Header closeButton className="bg-primary text-white">
-    <Modal.Title>Add New HR</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group className="mb-3">
-        <Form.Label>HR Name</Form.Label>
-        <Form.Control
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Enter HR name"
-        />
-      </Form.Group>
+      {/* Add HR Modal */}
+      <Modal show={showForm} onHide={() => setShowForm(false)} centered>
+        <Modal.Header closeButton className="hero-gradient text-white">
+          <Modal.Title>Add New HR</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group className="mb-3">
+              <Form.Label>HR Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Enter HR name"
+                />
+            </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Company</Form.Label>
-        <Form.Control
-          type="text"
-          name="company_name"
-          value={formData.company_name}
-          onChange={handleChange}
-          placeholder="Enter company name"
-        />
-      </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Company</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="company_name"
+                  value={formData.company_name}
+                  onChange={handleChange}
+                  placeholder="Enter company name"
+                />
+            </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Password</Form.Label>
-        <Form.Control
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Enter password"
-        />
-      </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter password"
+                />
+            </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Contact</Form.Label>
-        <Form.Control
-          type="text"
-          name="contact"
-          value={formData.contact}
-          onChange={handleChange}
-          placeholder="Enter contact number"
-        />
-      </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Contact</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  placeholder="Enter contact number"
+                />
+            </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Enter email"
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowForm(false)}>
-      Cancel
-    </Button>
-    <Button variant="primary" onClick={handleSubmit}>
-      Add HR
-    </Button>
-  </Modal.Footer>
-</Modal>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter email"
+                />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+         <Button variant="secondary" onClick={() => setShowForm(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSubmit}>
+            Add HR
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
 
       
      {/* Edit HR Modal */}
-<Modal show={!!editData} onHide={() => setEditData(null)} centered>
-  <Modal.Header closeButton className="bg-primary text-white">
-    <Modal.Title>Edit HR</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    {editData && (
-      <Form>
-        <Form.Group className="mb-3">
-          <Form.Label>HR Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="name"
-            value={editData.name}
-            onChange={(e) =>
-              setEditData({ ...editData, [e.target.name]: e.target.value })
-            }
-          />
-        </Form.Group>
+      <Modal show={!!editData} onHide={() => setEditData(null)} centered>
+        <Modal.Header closeButton className="bg-primary text-white hero-gradient">
+          <Modal.Title>Edit HR</Modal.Title>
+            </Modal.Header>
+              <Modal.Body>
+                {editData && (
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>HR Name</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="name"
+                        value={editData.name}
+                        onChange={(e) =>
+                          setEditData({ ...editData, [e.target.name]: e.target.value })
+                        }
+                      />
+                  </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Company</Form.Label>
-          <Form.Control
-            type="text"
-            name="company_name"
-            value={editData.company_name}
-            onChange={(e) =>
-              setEditData({ ...editData, [e.target.name]: e.target.value })
-            }
-          />
-        </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Company</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="company_name"
+                      value={editData.company_name}
+                      onChange={(e) =>
+                        setEditData({ ...editData, [e.target.name]: e.target.value })
+                      }
+                    />
+                  </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            value={editData.password}
-            onChange={(e) =>
-              setEditData({ ...editData, [e.target.name]: e.target.value })
-            }
-          />
-        </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                      type="password"
+                      name="password"
+                      value={editData.password}
+                      onChange={(e) =>
+                        setEditData({ ...editData, [e.target.name]: e.target.value })
+                      }
+                    />
+                  </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Contact</Form.Label>
-          <Form.Control
-            type="text"
-            name="contact"
-            value={editData.contact}
-            onChange={(e) =>
-              setEditData({ ...editData, [e.target.name]: e.target.value })
-            }
-          />
-        </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Contact</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="contact"
+                      value={editData.contact}
+                      onChange={(e) =>
+                        setEditData({ ...editData, [e.target.name]: e.target.value })
+                      }
+                    />
+                  </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={editData.email}
-            onChange={(e) =>
-              setEditData({ ...editData, [e.target.name]: e.target.value })
-            }
-          />
-        </Form.Group>
-      </Form>
-    )}
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setEditData(null)}>
-      Cancel
-    </Button>
-    <Button variant="primary" onClick={handleUpdate}>
-      Update HR
-    </Button>
-  </Modal.Footer>
-</Modal>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={editData.email}
+                      onChange={(e) =>
+                        setEditData({ ...editData, [e.target.name]: e.target.value })
+                      }
+                    />
+                  </Form.Group>
+                </Form>
+              )}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setEditData(null)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleUpdate}>
+                Update HR
+              </Button>
+            </Modal.Footer>
+      </Modal>
 
       {/* HR List Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
-        <Modal.Header closeButton>
-          <Modal.Title className="w-100 text-center">HR List</Modal.Title>
+        <Modal.Header closeButton className="hero-gradient no-border ">
+          <Modal.Title className="w-100 text-center hero-gradient text-white">HR List</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="hero-gradient">
           {hrs.length > 0 ? (
-            <div className="d-flex justify-content-center">
-              <Table striped bordered hover responsive className="text-center w-75">
+            <div className="d-flex justify-content-center ">
+              <Table striped bordered hover responsive className=" text-center w-95">
               <thead>
                 <tr>
                   <th>SR No</th>
@@ -389,6 +402,7 @@ const AdminProfile = () => {
         </Modal.Body>
       </Modal>
     </Container>
+    </section>
   );
 };
 

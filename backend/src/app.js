@@ -6,8 +6,7 @@ let app=express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
-
+app.use("/uploads", express.static("uploads"));
 
 
 let userRoutes = require('./routes/userRoutes');  
@@ -17,8 +16,6 @@ let jobRoutes = require('./routes/jobRoutes');
 let contactRoutes = require('./routes/contactRoutes');
 let authRoutes = require('./routes/authRoutes');
 let scheduleRoutes = require("./routes/scheduleRoutes");
-
-
 
 app.use(express.static('public'));
 

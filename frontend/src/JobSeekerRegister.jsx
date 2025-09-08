@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { registerJobSeeker } from "./services/jobseekerService";
 
 const JobSeekerRegister = () => {
@@ -8,7 +9,7 @@ const JobSeekerRegister = () => {
     contact: "",
     password: "",
   });
-
+   const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -27,15 +28,13 @@ const JobSeekerRegister = () => {
       });
   };
   return (
-    <div
-      className="container py-5"
-      style={{ marginTop: "30px", width: "800px" }}
-    >
-      <h2 className="mb-4">Job Seeker Register</h2>
-      <form
+    <div className="flex flex-col items-center justify-start min-h-screen hero-gradient p-5 font-[Inter]">
+      <div className="container py-3 " style={{ marginTop: "120px", width: "580px" }}>
+        <h2 className="text-2xl font-bold mb-3 text-center text-white">Job Seeker Register</h2>
+          <form
         className="p-4 rounded shadow bg-white "
         onSubmit={handleSubmit}
-        style={{ width: "800px" }}
+        style={{ width: "580px" }}
       >
         <div className="mb-3">
           <label className="form-label ">Name</label>
@@ -46,6 +45,7 @@ const JobSeekerRegister = () => {
             value={formData.name}
             style={{ width: "500px ", border: "1px solid black" }}
             placeholder="Enter your name"
+            autoComplete="name"
             onChange={handleChange}
           />
         </div>
@@ -59,6 +59,7 @@ const JobSeekerRegister = () => {
             value={formData.email}
             style={{ width: "500px ", border: "1px solid black" }}
             placeholder="Enter Email"
+            autoComplete="off"
             onChange={handleChange}
           />
         </div>
@@ -72,6 +73,7 @@ const JobSeekerRegister = () => {
             value={formData.contact}
             style={{ width: "500px ", border: "1px solid black" }}
             placeholder="Enter Contact"
+            autoComplete="off"
             onChange={handleChange}
           />
         </div>
@@ -85,6 +87,7 @@ const JobSeekerRegister = () => {
             value={formData.password}
             style={{ width: "500px ", border: "1px solid black" }}
             placeholder="Enter Password"
+            autoComplete="off"
             onChange={handleChange}
           />
         </div>
@@ -96,8 +99,16 @@ const JobSeekerRegister = () => {
           >
             Register
           </button>
+          <button
+              type="button"
+              className="btn btn-secondary m-3"
+              onClick={() => navigate("/")}
+            >
+              Cancel
+            </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };

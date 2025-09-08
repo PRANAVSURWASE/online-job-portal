@@ -10,8 +10,7 @@ let jwt = require('jsonwebtoken');
  */
 exports.registerUser = (req, res) => {
      let { name, email, contact, password } = req.body;
-     console.log("name, email, contact, password", name, email, contact, password);
-     // Validate input fields
+        // Validate input fields
     if (!name || !email  || !contact|| !password) {
         return res.json({
             message: "All fields are required" });
@@ -51,15 +50,10 @@ exports.applyForJob = (req, res) => {
         }
          const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const uid = decoded.uid;   // get user id from token
-        console.log("decoded id ",uid);
         const { hr_id, j_id } = req.body;  // these still come from body
 
-
-    
-    // Validate input
     if (!uid ||!hr_id ||!j_id) {
-        console.log( uid,hr_id,j_id);
-        return res.json({ msg: "User ID and Job ID are required" });
+       return res.json({ msg: "User ID and Job ID are required" });
     }
     // Call the model to apply for the job
     let promise=applicationModel.checkAlreadyApplied(uid, j_id)
@@ -91,11 +85,9 @@ exports.viewApplicationsHistory = (req, res) => {
         if (!token) {
             return res.status(401).json({ msg: "No token provided" });
         }
-
         // Decode JWT to get user id
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const uid = decoded.uid;   // Always from token, not params
-
         // Call model
         applicationModel.viewApplicationsHistory(uid)
             .then(result => {
@@ -120,11 +112,8 @@ exports.viewApplicationsHistory = (req, res) => {
     }
 };
 
-
-
 exports.getUserProfile = (req, res) => {
   try {
-    
     const user = {
       uid: req.user.uid,
       name: req.user.name,      
@@ -143,16 +132,14 @@ exports.getUserProfile = (req, res) => {
 exports.updateUser = (req, res) => {
   const { uid } = req.user;
   const { name, email, contact, password, skills, education } = req.body;
-    console.log("name, email, contact, password", name, email, contact, password);
-
-    if (!name || !email || !contact || !password || !skills || !education) {
+   if (!name || !email || !contact || !password || !skills || !education) {
     return res.status(400).json({ msg: "All fields are required" });
   }
     const resume = req.file ? req.file.filename : null;
     let promise = userModel.updateUser(uid,name,email,contact,password,skills,education,resume);
     promise.then(() => {
       res.json({
-        msg: "Profile updated successfully",
+        //msg: "Profile updated successfully",
         user: {uid,name,email,contact,password,skills,education,resume, },
       });
     })
@@ -161,11 +148,9 @@ exports.updateUser = (req, res) => {
     });
 };
 
-
 exports.searchJobsByName=(req, res) => {
   let { j_name } = req.body;
-
-  // Validate input
+    // Validate input
   if (!j_name) {
     return res.status(400).json({ msg: "Job name is required" });
   }
@@ -192,14 +177,10 @@ exports.viewInterviews=(req,res)=>{
         if (!token) {
             return res.status(401).json({ msg: "No token provided" });
         }
-
         // Decode JWT to get user id
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const uid = decoded.uid;   // from token
-        console.log("user ID:" ,uid);
-    
-
-     scheduleModel.viewInterviews(uid)
+        scheduleModel.viewInterviews(uid)
             .then(result => {
                 if (result.length > 0) {
                     res.status(200).json({ 

@@ -89,3 +89,12 @@ body {
   padding: 0;
   background-color: #f9f9f9; /* optional: cleaner background */
 }
+/* Prevent navbar shifting when scrollbar appears/disappears */
+html {
+  overflow-y: scroll;
+}
+
+/*remove border from modal header */
+.no-border {
+  border-bottom: none !important;
+}

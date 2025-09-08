@@ -44,7 +44,8 @@ const ViewJobs = () => {
   }, [search, jobs]);
 
   return (
-    <div className="container" style={{ marginTop: "70px" }}>
+  <section className="hero-gradient text-white py-5" style={{ marginTop: '58px', minHeight: '90vh' }}>
+    <div className="container">
       <h2 className="text-center mb-4">💼 Available Jobs</h2>
 
       {/* Search Bar */}
@@ -53,7 +54,7 @@ const ViewJobs = () => {
         placeholder="Search jobs by title, company, location, or skills..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="mb-4"
+        className="mb-4 form-control-lg"
       />
 
       {error && <Alert variant="danger">{error}</Alert>}
@@ -62,8 +63,7 @@ const ViewJobs = () => {
         filteredJobs.map((job, index) => (
           <div
             key={index}
-            className="job-block shadow-sm p-4 mb-4 rounded border"
-            style={{ backgroundColor: "#fff" }}
+            className="job-block shadow-sm p-4 mb-4 rounded border bg-white text-dark"
           >
             <div className="d-flex justify-content-between align-items-center">
               <div>
@@ -73,8 +73,8 @@ const ViewJobs = () => {
                   📍 <strong>Location:</strong> {job.location}
                 </p>
                 <div className="mb-2">
-                  <strong>Skills:</strong>
-                  <br />
+                  <strong>Skills:    </strong>
+                  {/* <br /> */}
                   {job.skills.split(",").map((skills, i) => (
                     <Badge bg="secondary" className="me-2 mt-2" key={i}>
                       {skills.trim()}
@@ -97,7 +97,9 @@ const ViewJobs = () => {
         <p className="text-center">No matching jobs found.</p>
       )}
     </div>
-  );
+  </section>
+);
+
 };
 
 export default ViewJobs;

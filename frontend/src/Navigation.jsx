@@ -7,14 +7,14 @@ const Navigation = () => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm">
-      <Container>
+    <Navbar bg="white" expand="lg" fixed="top" className="shadow-sm py-3 px-4">
+     
         <Navbar.Brand
           as={Link}
           to="/"
-          className="d-flex align-items-center fw-bold"
+          className="d-flex align-items-center fw-bold  "
         >
-          <Briefcase className="me-2" size={24} color="#0d6efd" />
+          <Briefcase className="me-2" size={30} color="#0d6efd" />
           JobSpot
         </Navbar.Brand>
         <Navbar.Toggle
@@ -49,12 +49,28 @@ const Navigation = () => {
               variant="outline-primary"
               className="me-2"
             >
-              Sign In
+              Login
             </Button>
-            <Button variant="primary">Get Started</Button>
+            <Button
+              as={Link}
+              to="/jobseeker-register"
+              variant="outline-primary"
+              className="me-2"
+            >
+              Sign Up for Job Seekers
+            </Button>
+            <Button
+              as={Link}
+              to="/employer-register"
+              variant="outline-primary"
+              className="me-2"
+            >
+              Sign Up for Employers
+            </Button>
+            
           </div>
         </Navbar.Collapse>
-      </Container>
+      
     </Navbar>
   );
 };

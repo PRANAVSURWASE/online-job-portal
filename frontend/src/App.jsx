@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Globe } from "lucide-react";
 import Navigation from "./Navigation";
 import HeroSection from "./HeroSection";
-import JobCategoriesSection from "./JobCategoriesSection";
+//import JobCategoriesSection from "./JobCategoriesSection";
 import CTASection from "./CTASection";
 import Footer from "./Footer";
 import ContactPage from "./ContactPage";
@@ -16,13 +16,13 @@ import EmployerProfile from "./EmployerProfile";
 import About from "./About";
 import JobSeekerEditProfile from "./JobSeekerEditProfile";
 import AdminProfile from "./AdminProfile";
-import Companies from "./companies";
+import Companies from "./Companies";
 import ViewJobs from "./ViewJobs"
 
 const HomePage = () => (
   <>
     <HeroSection />
-    <JobCategoriesSection />
+    {/* <JobCategoriesSection /> */}
     <CTASection />
     <Footer />
   </>

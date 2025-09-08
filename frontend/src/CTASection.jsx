@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const CTASection = () => {
   const navigate = useNavigate();
   return (
-    <section className="py-5 bg-primary text-white">
+    <section className="py-5  text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
       <Container>
         {/* Two-column CTA */}
         <Row className="mb-5">

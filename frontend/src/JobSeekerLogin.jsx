@@ -51,56 +51,59 @@ const JobSeekerLogin = () => {
 
   return (
     <div
-      className="container py-5"
-      style={{ marginTop: "80px", width: "800px" }}
+      className="hero-gradient min-vh-100 d-flex align-items-center justify-content-center"
+      style={{ marginTop: "5px" }}
     >
-      <h2 className="mb-4">Job Seeker Login</h2>
-      {msg && (
-        <div className={`alert alert-${alertType} text-center`} role="alert">
-          {msg}
-        </div>
-      )}
+      <div className="container" style={{ maxWidth: "600px" }}>
+        <h2 className="mb-4 text-white text-center">Job Seeker Login</h2>
+        {msg && (
+          <div className={`alert alert-${alertType} text-center`} role="alert">
+            {msg}
+          </div>
+        )}
 
-      <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">Email</label>
-          <input
-            type="email"
-            className="form-control"
-            name="email"
-            value={formData.email}
-            style={{ width: "500px", border: "1px solid black" }}
-            placeholder="Enter Email"
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form className="p-4 rounded shadow bg-white" onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              value={formData.email}
+              style={{ width: "500px", border: "1px solid black" }}
+              placeholder="Enter Email"
+              onChange={handleChange}
+              required
+              autoComplete="off"
+            />
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            name="password"
-            value={formData.password}
-            style={{ width: "500px", border: "1px solid black" }}
-            placeholder="Enter Password"
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              value={formData.password}
+              style={{ width: "500px", border: "1px solid black" }}
+              placeholder="Enter Password"
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <button type="submit" className="btn btn-primary m-3">
-          Login
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => navigate("/jobseeker-register")}
-        >
-          Register as Job Seeker
-        </button>
-      </form>
+          <button type="submit" className="btn btn-primary m-3">
+            Login
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => navigate("/jobseeker-register")}
+          >
+            Register as Job Seeker
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -64,11 +64,9 @@ const AuthPage = () => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Card className="p-4 shadow-lg" style={{ width: "400px" }}>
+    <section className="hero-gradient d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
+  <Container className="d-flex justify-content-center align-items-center">
+    <Card className="p-4 shadow-lg" style={{ width: "400px" }}>
         <h3 className="text-center mb-3">Sign In</h3>
         {error && <p className="text-danger text-center">{error}</p>}
 
@@ -92,7 +90,7 @@ const AuthPage = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter email"
-              autoComplete="email"
+              autoComplete="off"
               required
             />
           </Form.Group>
@@ -116,8 +114,9 @@ const AuthPage = () => {
             </Button>
           </div>
         </Form>
-      </Card>
-    </Container>
+       </Card>
+  </Container>
+</section>
   );
 };
 

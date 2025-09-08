@@ -3,8 +3,6 @@ let db = require('../../db.js');
 
 
 exports.findUserByEmail = (email) => {
-  console.log("Finding user by email:", email);
-  
   return new Promise((resolve, reject) => {
     db.query("SELECT * FROM user WHERE email = ?", [email], (err, results) => {
       if (err) return reject(err);

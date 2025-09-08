@@ -49,10 +49,11 @@ const EmployerLogin = () => {
 
   return (
     <div
-      className="container py-5"
-      style={{ marginTop: "80px", width: "800px" }}
+      className="hero-gradient min-vh-100 d-flex align-items-center justify-content-center"
+      style={{ marginTop: "5px" }}
     >
-      <h2 className="mb-4">Employer Login</h2>
+      <div className="container" style={{ maxWidth: "600px" }}>
+      <h2 className="mb-4 text-white text-center">Employer Login</h2>
       {msg && (
         <div
           className={`alert alert-${alertType} text-center py-2`}
@@ -104,6 +105,7 @@ const EmployerLogin = () => {
           Register
         </button>
       </form>
+    </div>
     </div>
   );
 };

@@ -22,7 +22,7 @@ exports.scheduleInterview = (req, res) => {
     if (!uid || !j_id || !date || !time) {
         return res.status(400).json({ msg: "uid, j_id, date, and time are required" });
     }
-    console.log("✅ Validated Data:", { uid, j_id, date, time, mode, location, meetingLink, notes, hr_id });
+    //console.log("✅ Validated Data:", { uid, j_id, date, time, mode, location, meetingLink, notes, hr_id });
     scheduleModel.hasAppliedForJob(uid, j_id)
         .then(hasApplied => {
             if (!hasApplied) {
@@ -45,21 +45,15 @@ exports.scheduleInterview = (req, res) => {
 
 exports.getScheduledInterviews = (req, res) => {
     try {
-        
         const token = req.headers["authorization"]?.split(" ")[1];
         if (!token) {
             return res.status(401).json({ msg: "No token provided" });
         }
-
-        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded || !decoded.id) {
             return res.status(403).json({ msg: "Invalid token" });
         }
-
         const hr_id = decoded.id; // using decoded.id as HR ID
-
-       
         scheduleModel.getScheduledInterviewsByHr(hr_id)
             .then(result => {
                 if (result.length > 0) {
