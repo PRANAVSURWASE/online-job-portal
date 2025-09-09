@@ -349,9 +349,9 @@ const AdminProfile = () => {
       {/* HR List Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Header closeButton className="hero-gradient no-border ">
-          <Modal.Title className="w-100 text-center hero-gradient text-white">HR List</Modal.Title>
+          <Modal.Title className="w-100 text-center  text-white">HR List</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="hero-gradient">
+        <Modal.Body>
           {hrs.length > 0 ? (
             <div className="d-flex justify-content-center ">
               <Table striped bordered hover responsive className=" text-center w-95">

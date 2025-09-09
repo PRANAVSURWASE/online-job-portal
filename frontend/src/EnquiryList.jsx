@@ -39,7 +39,7 @@ const EnquiryList = ({ showModal, setShowModal, token }) => {
           Enquiry List
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body className="hero-gradient">
+      <Modal.Body >
         {enquiries.length > 0 ? (
           <div className="d-flex justify-content-center">
             <Table striped bordered hover responsive className="text-center w-95">

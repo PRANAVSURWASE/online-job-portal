@@ -9,21 +9,12 @@ const fs = require('fs');
  */
 exports.hrRegister = (req, res) => {
   let { name, company_name, password, contact, email } = req.body;
-
   // Validate input
   if (!name || !company_name || !password || !contact || !email) {
     return res.json({ msg: "All fields are required" });
   }
-
-  let promise = hrModel.hrRegister(
-    name,
-    company_name,
-    password,
-    contact,
-    email
-  );
-  promise
-    .then((result) => {
+  let promise = hrModel.hrRegister(name,company_name,password,contact,email);
+  promise.then((result) => {
       if (result.affectedRows > 0) {
         res.status(200).json({ msg: "HR registration successful" });
       } else {
@@ -38,7 +29,6 @@ exports.hrRegister = (req, res) => {
 };
 
 exports.getHrProfile = (req, res) => {
-  
   try {
     const hr = {
       id: req.user.id,
@@ -63,18 +53,14 @@ exports.createJob = (req, res) => {
     if (!token) {
       return res.status(401).json({ msg: "Token missing" });
     }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const hr_id = decoded.id; // Extract HR ID from token
-
-    const { j_name, skills, location } = req.body;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  const hr_id = decoded.id; // Extract HR ID from token
+  const { j_name, skills, location } = req.body;
     if (!j_name || !location || !skills) {
       return res.status(400).json({ msg: "All fields are required" });
     }
-
-    // format date as YYYY-MM-DD
+  // format date as YYYY-MM-DD
     const posted_date = new Date().toISOString().slice(0, 10);
-
     let promise = hrModel.createJob(hr_id, j_name, skills, location, posted_date);
     promise
       .then((result) => {
