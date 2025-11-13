@@ -26,7 +26,7 @@ const Footer = () => {
               </div>
               <div className="d-flex align-items-center">
                 <MapPin size={16} className="me-2" />
-                <span>123 Business Ave, Tech City, PUNE 12345</span>
+                <span>123 Business Ave, Tech City, PUNE 411058</span>
               </div>
             </div>
             
